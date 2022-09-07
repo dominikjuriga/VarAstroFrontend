@@ -1,0 +1,10 @@
+.layout {
+  display: flex;
+  flex-direction: row;
+}
+
+.layoutContent {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}

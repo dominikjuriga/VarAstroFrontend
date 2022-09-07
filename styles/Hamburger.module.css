@@ -1,0 +1,29 @@
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  /* padding: 1em; */
+}
+
+.line {
+  height: 3px;
+  border-radius: 3px;
+  width: 1.5em;
+  background-color: white;
+  transition: var(--default-transition);
+}
+
+.sidebarToggled .line1 {
+  width: 2em;
+}
+
+.sidebarToggled .line2 {
+  width: 1.2em;
+}
+
+.sidebarToggled .line3 {
+  width: 1.7em;
+}

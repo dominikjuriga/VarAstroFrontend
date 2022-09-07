@@ -2,7 +2,7 @@ import React from 'react'
 import Link from "next/link"
 import s from "../styles/Sidebar.module.css"
 import { FaHome } from "react-icons/fa"
-import { BiLogIn, BiLogOut } from "react-icons/bi"
+import { BiLogIn, BiUserPlus, BiStar } from "react-icons/bi"
 
 interface IProps {
   sidebarToggled: boolean
@@ -21,9 +21,14 @@ const Sidebar = ({ sidebarToggled }: IProps) => {
       icon: <BiLogIn />
     },
     {
-      title: "Log Out",
-      href: "/logout",
-      icon: <BiLogOut />
+      title: "Register",
+      href: "/auth/register",
+      icon: <BiUserPlus />
+    },
+    {
+      title: "Stars",
+      href: "/stars",
+      icon: <BiStar />
     },
   ]
   return (

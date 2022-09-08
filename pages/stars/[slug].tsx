@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import StarTable from '../../components/StarTable';
+import StarCatalogTable from '../../components/StarCatalogTable';
 import Card from "../../components/Card";
-
-interface IResponse {
-  name: string,
-  ra: number,
-  dec: number,
-  starPublish: {
-    discoverer: string
-  }
-}
+import { IStar } from '../../models';
+import { useRouter } from 'next/router';
 
 const Slug = () => {
-  const [data, setData] = useState<IResponse | null>(null);
-  const [loading, setLoading] = useState(true)
-  const id = 1
-  const fetchStarData = async () => {
-    const response = await fetch(`https://var-dj.astro.cz/api/star/${id}`);
+  const [data, setData] = useState<IStar | null>(null);
+  const [loading, setLoading] = useState<boolean>(true)
+  const { slug } = useRouter().query
+
+  const fetchStarData = async (slug: string): Promise<void> => {
+    const response = await fetch(`https://var-dj.astro.cz/api/star/${slug}`);
     if (response.status == 200) {
       const result = await await response.json()
       setData(result.data)
@@ -25,16 +20,21 @@ const Slug = () => {
   }
 
   useEffect(() => {
-    fetchStarData()
-  }, [])
+    if (slug) {
+      fetchStarData(slug.toString())
+    }
+  }, [slug])
 
-  if (loading) return <p>Loading</p>
+  if (loading || data === null) return <p>Loading</p>
 
   return (
     <div>
       <h3>Object {data && data.name}</h3>
-      <Card>
+      <Card title={`Star Details`}>
         <StarTable data={data} />
+      </Card>
+      <Card title={`Star Catalogs`}>
+        <StarCatalogTable starCatalogs={data.starCatalogs} />
       </Card>
     </div>
   )

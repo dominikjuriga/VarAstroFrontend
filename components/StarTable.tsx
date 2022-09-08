@@ -1,13 +1,6 @@
 import React from 'react'
-
-interface IStar {
-  name: string,
-  ra: number,
-  dec: number,
-  starPublish: {
-    discoverer: string
-  }
-}
+import { IStar } from "../models"
+import { formatCoordinate } from "../helpers"
 
 interface IProps {
   data: IStar
@@ -19,17 +12,24 @@ const StarTable: React.FC<IProps> = ({ data }) => {
       <tbody>
         <tr>
           <th>RA:</th>
-          <td>{data.ra}</td>
+          <td>{formatCoordinate(data.ra)}</td>
         </tr>
 
         <tr>
           <th>DEC:</th>
-          <td>{data.dec}</td>
+          <td>{formatCoordinate(data.dec)}</td>
         </tr>
 
+        {data.starPublish && (
+          <tr>
+            <th>Discoverer</th>
+            <td>{data.starPublish.discoverer}</td>
+          </tr>
+        )}
         <tr>
-          <th>Discoverer</th>
-          <td>{data.starPublish.discoverer}</td>
+          <th>
+
+          </th>
         </tr>
       </tbody>
     </table>

@@ -3,6 +3,8 @@ import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 import Hamburger from './Hamburger'
 import s from "../styles/Layout.module.css"
+import { ToastContainer } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
 
 interface IProps {
   children: React.ReactNode
@@ -27,7 +29,9 @@ const Layout: React.FC<IProps> = ({ children }) => {
           {children}
         </div>
       </div>
+      <ToastContainer />
     </div>
+
   )
 }
 

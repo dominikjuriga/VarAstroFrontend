@@ -4,6 +4,7 @@ import StarCatalogTable from '../../components/StarCatalogTable';
 import Card from "../../components/Card";
 import { IStar } from '../../models';
 import { useRouter } from 'next/router';
+import TestBoxChart from "../../components/TestBoxChart"
 
 const Slug = () => {
   const [data, setData] = useState<IStar | null>(null);
@@ -36,6 +37,7 @@ const Slug = () => {
       <Card title={`Star Catalogs`}>
         <StarCatalogTable starCatalogs={data.starCatalogs} />
       </Card>
+      {/* <TestBoxChart></TestBoxChart> */}
     </div>
   )
 }

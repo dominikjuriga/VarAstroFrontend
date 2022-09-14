@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Link from "next/link"
-import { IStar } from '../models'
+import { IStar } from '../../models'
 
 const Stars = () => {
   const [data, setData] = useState<IStar[] | null>(null)

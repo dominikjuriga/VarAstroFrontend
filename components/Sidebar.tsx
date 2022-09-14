@@ -2,7 +2,7 @@ import React from 'react'
 import Link from "next/link"
 import s from "../styles/Sidebar.module.css"
 import { FaHome } from "react-icons/fa"
-import { BiLogIn, BiUserPlus, BiStar } from "react-icons/bi"
+import { BiLogIn, BiUserPlus, BiStar, BiPlus, BiDevices } from "react-icons/bi"
 
 interface IProps {
   sidebarToggled: boolean
@@ -29,6 +29,16 @@ const Sidebar = ({ sidebarToggled }: IProps) => {
       title: "Stars",
       href: "/stars",
       icon: <BiStar />
+    },
+    {
+      title: "New Light Curve",
+      href: "/lightcurves/upload",
+      icon: <BiPlus />
+    },
+    {
+      title: "Devices",
+      href: "/devices",
+      icon: <BiDevices />
     },
   ]
   return (

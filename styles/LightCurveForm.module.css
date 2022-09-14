@@ -1,0 +1,20 @@
+.coordinateForm button[type="submit"] {
+  padding: 1em;
+}
+
+.coordinateField {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 1em;
+}
+
+.coordinateField div {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+}
+
+.coordinateField div input {
+  padding: 1em;
+}

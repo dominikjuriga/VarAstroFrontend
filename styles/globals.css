@@ -1,5 +1,5 @@
 :root {
-  --sidebar-toggled-width: 15em;
+  --sidebar-toggled-width: 20em;
   --sidebar-hidden-width: 4em;
   --default-transition: .5s all ease;
   --sidebar-bg: rgb(36, 36, 36);

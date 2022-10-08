@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import DeviceList from '../../components/DeviceList'
-import getDevices, { Device } from '../api/simulate'
+import { getDevices, IDevice } from '../api/simulate'
 import { toast } from "react-toastify"
 
 const Devices = () => {
-  const [devices, setDevices] = useState<Device[] | null>(null)
+  const [devices, setDevices] = useState<IDevice[] | null>(null)
 
   const fetchData = async () => {
     const result = await getDevices()

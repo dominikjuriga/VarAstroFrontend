@@ -1,12 +1,21 @@
-export interface Device {
+export interface IDevice {
   id: number,
   title: string,
   deviceType: string
 }
 
-export interface IResponse {
-  data: Device[],
+export interface IObservatory {
+  id: number,
+  details: string,
+}
+
+export interface IDeviceResponse {
+  data: IDevice[],
   status: number
+}
+
+export interface IObservatoryResponse {
+  data: IObservatory[]
 }
 
 const delay = async (delay: number = 1000) => {
@@ -14,7 +23,7 @@ const delay = async (delay: number = 1000) => {
   return
 }
 
-const getDevices = async (): IResponse => {
+const getDevices = async (): IDeviceResponse => {
   // Simulate API request to retrieve device list
   await delay()
   return {
@@ -33,5 +42,18 @@ const getDevices = async (): IResponse => {
     ]
   }
 }
+const getObservatories = async (): IObservatoryResponse => {
+  // Simulate API request to retrieve device list
+  await delay()
+  return {
+    status: 200,
+    data: [
+      {
+        id: 1,
+        details: "Brno Kravi Hora"
+      },
+    ]
+  }
+}
 
-export default getDevices;
+export { getDevices, getObservatories };

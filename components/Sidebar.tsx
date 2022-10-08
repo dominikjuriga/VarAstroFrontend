@@ -2,7 +2,7 @@ import React from 'react'
 import Link from "next/link"
 import s from "../styles/Sidebar.module.css"
 import { FaHome } from "react-icons/fa"
-import { BiLogIn, BiUserPlus, BiStar, BiPlus, BiDevices } from "react-icons/bi"
+import { BiLogIn, BiUserPlus, BiStar, BiPlus, BiDevices, BiCamera, BiBuildingHouse } from "react-icons/bi"
 
 interface IProps {
   sidebarToggled: boolean
@@ -39,6 +39,21 @@ const Sidebar = ({ sidebarToggled }: IProps) => {
       title: "Devices",
       href: "/devices",
       icon: <BiDevices />
+    },
+    {
+      title: "Observatories",
+      href: "/observatories",
+      icon: <BiDevices />
+    },
+    {
+      title: "Create Device",
+      href: "/devices/create",
+      icon: <BiCamera />
+    },
+    {
+      title: "Create Observatory",
+      href: "/observatories/create",
+      icon: <BiBuildingHouse />
     },
   ]
   return (

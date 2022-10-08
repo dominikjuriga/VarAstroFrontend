@@ -1,78 +1,66 @@
-import React, { useState } from 'react'
-import { useTranslation } from "next-i18next"
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { Button, TextField, Stack } from '@mui/material';
+import { useApi } from '../../hooks/useApi';
 
-interface IFormProps {
-  username: string,
-  password: string
-}
+const validationSchema = Yup.object({
+  email: Yup
+    .string('Enter your email')
+    .email('Enter a valid email')
+    .required('Email is required'),
+  password: Yup
+    .string('Enter your password')
+    .min(8, 'Password should be of minimum 8 characters length')
+    .required('Password is required'),
+});
 
 const Login = () => {
-  const [formState, setFormState] = useState<IFormProps>({
-    username: "",
-    password: ""
-  })
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormState({
-      ...formState,
-      [e.target.name]: e.target.value
-    })
-  }
-
-  const handleSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault()
-  }
-
-  const { t } = useTranslation("common")
-
-  const usernameField = {
-    autoComplete: 'username',
-    minLength: 4,
-    name: 'username',
-    onChange: handleChange,
-    placeholder: 'user@example.com',
-    required: true,
-    type: "email",
-    value: formState.username
-  }
-
-  const passwordField = {
-    autoComplete: 'password',
-    minLength: 8,
-    name: 'password',
-    onChange: handleChange,
-    required: true,
-    type: "password",
-    value: formState.password
-  }
+  const formik = useFormik({
+    initialValues: {
+      email: 'foobar@example.com',
+      password: 'foobar',
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      useApi()
+    },
+  });
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="custom-form">
-        <h2>Log In</h2>
-        <div>
-          <label htmlFor="username">Username (E-Mail)</label>
-          <input {...usernameField} />
-        </div>
+    <div>
+      <form onSubmit={formik.handleSubmit}>
+        <Stack spacing={2}>
 
-        <div>
-          <label htmlFor="password">Password</label>
-          <input {...passwordField} />
-        </div>
-
-        <button type="submit">{t("test")}</button>
+          <TextField
+            fullWidth
+            id="email"
+            name="email"
+            label="Email"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            error={formik.touched.email && Boolean(formik.errors.email)}
+            helperText={formik.touched.email && formik.errors.email}
+          />
+          <TextField
+            fullWidth
+            id="password"
+            name="password"
+            label="Password"
+            type="password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            helperText={formik.touched.password && formik.errors.password}
+          />
+          <Button color="primary" variant="contained" type="submit">
+            Submit
+          </Button>
+        </Stack>
       </form>
-    </>
-  )
-}
-
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'footer'])),
-    },
-  };
-}
+    </div>
+  );
+};
 
 export default Login

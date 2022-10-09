@@ -1,5 +1,6 @@
 import { API_URL } from "../static/API"
 import { useEffect, useState } from "react"
+import { toast } from "react-toastify";
 
 const delay = (delayInms) => {
   return new Promise(resolve => setTimeout(resolve, delayInms));
@@ -16,6 +17,11 @@ const useApi = (path: string = "") => {
       .then((data) => {
         setData(data)
         setLoading(false)
+      })
+      .catch(error => {
+        setLoading(false)
+        console.error(error)
+        toast.error("Error while retrieving data")
       })
   }, [path])
 
@@ -35,6 +41,9 @@ const useApiPost = (path: string = "", body: any) => {
       .then((data) => {
         setData(data)
         setLoading(false)
+      })
+      .catch(error => {
+        toast.error("Error while retrieving data")
       })
   }, [path])
 

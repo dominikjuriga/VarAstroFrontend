@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import AuthContext from '../context/AuthContext'
 
 const darkTheme = createTheme({
   palette: {
@@ -27,6 +28,7 @@ const Layout: React.FC<IProps> = ({ children }) => {
     setSidebarToggled(t => !t)
   }
   return (
+    // <AuthContext.Provider>
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <div className={s.layout}>
@@ -42,6 +44,7 @@ const Layout: React.FC<IProps> = ({ children }) => {
         <ToastContainer />
       </div>
     </ThemeProvider>
+    // </AuthContext.Provider>
   )
 }
 

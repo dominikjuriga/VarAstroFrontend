@@ -33,7 +33,7 @@ const Register = () => {
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault()
     if (!validatePasswordsValid(formState.password, formState.confirmPassword)) return
-    else console.log("asd")
+
   }
 
   const { t } = useTranslation("common")

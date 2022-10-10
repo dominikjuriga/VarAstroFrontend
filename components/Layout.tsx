@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import Sidebar from './Sidebar'
+import React, { useEffect, useState } from 'react'
+import Sidebar from './Sidebar/Sidebar'
 import Topbar from './Topbar'
 import Hamburger from './Hamburger'
 import s from "../styles/Layout.module.css"
@@ -7,7 +7,7 @@ import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import AuthContext from '../context/AuthContext'
+import useAuth from '../features/auth/hooks/useAuth'
 
 const darkTheme = createTheme({
   palette: {
@@ -27,8 +27,9 @@ const Layout: React.FC<IProps> = ({ children }) => {
   const toggleSidebar = () => {
     setSidebarToggled(t => !t)
   }
+  const { user } = useAuth();
+
   return (
-    // <AuthContext.Provider>
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <div className={s.layout}>
@@ -44,7 +45,6 @@ const Layout: React.FC<IProps> = ({ children }) => {
         <ToastContainer />
       </div>
     </ThemeProvider>
-    // </AuthContext.Provider>
   )
 }
 

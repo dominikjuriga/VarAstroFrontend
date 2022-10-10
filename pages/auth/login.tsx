@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Button, TextField, Stack } from '@mui/material';
-import { useApiPost } from '../../hooks/useApi';
-import Loader from '../../components/Loader';
-import { API_URL } from '../../static/API';
-import { IServiceResponse, isResponseSuccessul } from '../../helpers';
-import { toast } from 'react-toastify';
+import useAuth from '../../features/auth/hooks/useAuth';
+import { useRouter } from 'next/router';
 
 const validationSchema = Yup.object({
   EmailAddress: Yup
@@ -20,51 +17,27 @@ const validationSchema = Yup.object({
 });
 
 const Login = () => {
-  const [success, setSuccess] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const handleSubmit = (values: any) => {
-    setLoading(true);
-    fetch(`${API_URL}/Auth/login`, {
-      body: JSON.stringify(values),
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      }
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (!isResponseSuccessul(data)) {
-          toast.error(data.message)
-          return;
-        }
-        setSuccess(true)
-      })
-
-    setLoading(false)
+  const { user, login } = useAuth();
+  const handleSubmit = async (values: any) => {
+    await login(values.EmailAddress, values.Password);
   }
-
+  const router = useRouter();
   useEffect(() => {
-    toast.error("Kappa")
+    if (user !== undefined) {
+      router.push("/")
+    }
   }, [])
 
   const formik = useFormik({
     initialValues: {
-      EmailAddress: 'foobar@example.com',
-      Password: 'foobar',
+      EmailAddress: 'user@example.com',
+      Password: 'stringst',
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
       handleSubmit(values)
     },
   });
-
-  if (loading) {
-    return <Loader />
-  }
-
-  if (!loading && success) {
-    return "Logged In"
-  }
 
   return (
     <div>

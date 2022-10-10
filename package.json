@@ -18,8 +18,10 @@
     "next-i18next": "^12.0.1",
     "react": "18.2.0",
     "react-apexcharts": "^1.4.0",
+    "react-cookie": "^4.1.1",
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
+    "react-jwt": "^1.1.7",
     "react-toastify": "^9.0.8",
     "yup": "^0.32.11"
   },

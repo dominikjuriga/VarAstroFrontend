@@ -1,8 +1,9 @@
 import { API_URL } from "../static/API"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify";
+import useAuth from "../features/auth/hooks/useAuth";
 
-const delay = (delayInms) => {
+const delay = (delayInms: number) => {
   return new Promise(resolve => setTimeout(resolve, delayInms));
 }
 
@@ -10,17 +11,27 @@ const useApi = (path: string = "") => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-
+  const { user } = useAuth();
   useEffect(() => {
-    fetch(`${API_URL}/${path}`)
+    fetch(`${API_URL}/${path}`, {
+      headers: {
+        "Authorization": `Bearer ${user?.authToken}`
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
-        setData(data)
+        setData(data.data)
         setLoading(false)
+        if (data.success === true) {
+          if (data.message) {
+            toast(data.message);
+          }
+        } else {
+          toast.error(data.message === "" ? "Unkown error has occured." : data.message);
+        }
       })
       .catch(error => {
         setLoading(false)
-        console.error(error)
         toast.error("Error while retrieving data")
       })
   }, [path])

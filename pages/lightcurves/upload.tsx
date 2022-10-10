@@ -44,13 +44,11 @@ const Upload = () => {
       method: "POST",
       body: formData
     })
-    console.log({ response })
     const data = await response.json()
-    console.log({ data })
   }
 
   useEffect(() => {
-    console.log({ file })
+    // console.log({ file })
   }, [file])
 
   return <form onSubmit={handleSubmit}>

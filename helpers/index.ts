@@ -6,9 +6,10 @@ interface IServiceResponse {
   message: string
 }
 
-const isResponseSuccessul = (response: IServiceResponse) => {
+const isResponseSuccessful = (response: IServiceResponse) => {
   return response.success;
 }
 
 
-export { formatCoordinate, isResponseSuccessul, IServiceResponse }
+export { formatCoordinate, isResponseSuccessful }
+export type { IServiceResponse }

@@ -33,7 +33,6 @@ const UploadStepOne: React.FC<IProps> = ({ nextStep }) => {
 
   const handleFileUploadClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    console.log('change')
     lightCurveFileRef.current.value = null;
     lightCurveFileRef.current?.click()
   }
@@ -54,7 +53,6 @@ const UploadStepOne: React.FC<IProps> = ({ nextStep }) => {
 
   const validateInputs = () => {
     Object.keys(formState).forEach((key: any) => {
-      console.log(`${key}: "${formState[key]}"`)
       if (formState[key] === "") {
         setHasError(true)
       }

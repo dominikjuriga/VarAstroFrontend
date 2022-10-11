@@ -7,7 +7,7 @@ import { useApi } from '../../hooks/useApi';
 
 const Slug = () => {
   const { slug } = useRouter().query
-  const { data, loading, error } = useApi(`stars/${slug}`)
+  const { data, loading, error } = useApi({ path: `stars/${slug}` })
 
   if (loading || data === null) return <p>Loading</p>
 

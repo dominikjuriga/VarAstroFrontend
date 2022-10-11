@@ -1,15 +1,15 @@
 import React from 'react'
-import { IObservatory } from '../pages/api/simulate'
+import { IObservatory } from "../models"
 
 interface IProps {
-  items: IObservatory[]
+  items: IObservatory[];
 }
 
 const ObservatoryList: React.FC<IProps> = ({ items }) => {
   return (
     <ul>
       {items.map((item) => (
-        <li key={item.id}>{item.details}</li>
+        <li key={item.id}>{item.name}</li>
       ))}
     </ul>
   )

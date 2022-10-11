@@ -13,6 +13,22 @@ const menu = [
     href: "/stars",
     icon: <BiStar />
   },
+]
+
+const unauthorizedUserMenu = [
+  {
+    title: "Log In",
+    href: "/auth/login",
+    icon: <BiLogIn />
+  },
+  {
+    title: "Register",
+    href: "/auth/register",
+    icon: <BiUserPlus />
+  },
+]
+
+const authorizedUserMenu = [
   {
     title: "New Light Curve",
     href: "/lightcurves/upload",
@@ -40,17 +56,4 @@ const menu = [
   },
 ]
 
-const unauthorizedUserMenu = [
-  {
-    title: "Log In",
-    href: "/auth/login",
-    icon: <BiLogIn />
-  },
-  {
-    title: "Register",
-    href: "/auth/register",
-    icon: <BiUserPlus />
-  },
-]
-
-export { menu, unauthorizedUserMenu }
+export { menu, unauthorizedUserMenu, authorizedUserMenu }

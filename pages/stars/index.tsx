@@ -5,7 +5,7 @@ import { useApi } from '../../hooks/useApi'
 import Loader from '../../components/Loader'
 
 const Stars = () => {
-  const { data, loading, error } = useApi("stars")
+  const { data, loading, error } = useApi({ path: "stars" })
 
   if (loading)
     return <Loader />

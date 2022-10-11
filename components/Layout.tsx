@@ -7,7 +7,7 @@ import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import useAuth from '../features/auth/hooks/useAuth'
+import useAuthentication from '../features/auth/hooks/useAuthentication'
 
 const darkTheme = createTheme({
   palette: {
@@ -27,7 +27,7 @@ const Layout: React.FC<IProps> = ({ children }) => {
   const toggleSidebar = () => {
     setSidebarToggled(t => !t)
   }
-  const { user } = useAuth();
+  const { user } = useAuthentication();
 
   return (
     <ThemeProvider theme={darkTheme}>

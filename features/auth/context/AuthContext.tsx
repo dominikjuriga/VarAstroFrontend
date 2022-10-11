@@ -21,6 +21,7 @@ export default function AuthProvider({
   const [user, setUser] = useState<User>();
   const [error, setError] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingInitial, setLoadingInitial] = useState<boolean>(true);
 
   const router = useRouter();
   const AuthTokenCookieName = "AuthToken";
@@ -28,6 +29,7 @@ export default function AuthProvider({
 
   useEffect(() => {
     loginFromCookie()
+    setLoadingInitial(false);
   }, []);
 
   async function login(EmailAddress: string, Password: string) {
@@ -62,7 +64,6 @@ export default function AuthProvider({
     if (Object.keys(cookies).includes("AuthToken")) {
       if (!isExpired(cookies.AuthToken)) {
         const decodedToken: IDecodedToken | null = decodeToken(cookies.AuthToken)
-        console.log({ decodedToken })
         if (decodedToken) {
           setUser({
             FirstName: decodedToken.FirstName,
@@ -103,7 +104,7 @@ export default function AuthProvider({
 
   return (
     <AuthContext.Provider value={memoedValue} >
-      {children}
+      {!loadingInitial && children}
     </AuthContext.Provider>
   );
 }

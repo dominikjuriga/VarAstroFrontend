@@ -35,3 +35,31 @@ export interface IStar {
   starPublish: IStarPublish,
   starCatalogs: IStarCatalogs[]
 }
+
+export interface IServiceResponse {
+  success: boolean,
+  data?: any,
+  message: string
+}
+
+
+export interface IObservatory {
+  id: number;
+  name: string;
+  address?: string;
+}
+
+export interface IDevice {
+  id: number;
+  title: string;
+  deviceType: string;
+}
+
+export interface IDeviceResponse {
+  data: IDevice[],
+  status: number,
+}
+
+export interface IObservatoryResponse {
+  data: IObservatory[];
+}

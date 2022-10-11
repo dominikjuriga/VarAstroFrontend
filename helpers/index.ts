@@ -1,10 +1,7 @@
+import { IServiceResponse } from "../models";
+
 const formatCoordinate = (value: number) => value.toFixed(6)
 
-interface IServiceResponse {
-  success: boolean,
-  data?: any,
-  message: string
-}
 
 const isResponseSuccessful = (response: IServiceResponse) => {
   return response.success;
@@ -12,4 +9,3 @@ const isResponseSuccessful = (response: IServiceResponse) => {
 
 
 export { formatCoordinate, isResponseSuccessful }
-export type { IServiceResponse }

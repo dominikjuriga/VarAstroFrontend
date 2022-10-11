@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Button, TextField, Stack } from '@mui/material';
-import useAuth from '../../features/auth/hooks/useAuth';
+import useAuthentication from '../../features/auth/hooks/useAuthentication';
 import { useRouter } from 'next/router';
 
 const validationSchema = Yup.object({
@@ -17,7 +17,7 @@ const validationSchema = Yup.object({
 });
 
 const Login = () => {
-  const { user, login } = useAuth();
+  const { user, login } = useAuthentication();
   const handleSubmit = async (values: any) => {
     await login(values.EmailAddress, values.Password);
   }

@@ -19,6 +19,12 @@ const Observatories = () => {
       flex: 1
     },
     {
+      field: 'type',
+      headerName: 'Type',
+      minWidth: 200,
+      flex: 1
+    },
+    {
       field: 'isDefault',
       headerName: 'Is Default',
       minWidth: 200,

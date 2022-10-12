@@ -3,6 +3,8 @@ import Link from "next/link";
 import Button from "@mui/material/Button"
 import DataTable from "../../components/DataTable"
 import { GridColDef } from "@mui/x-data-grid";
+import DefaultContainer from "../../components/DefaultContainer";
+import { Typography } from "@mui/material";
 
 const Observatories = () => {
   function getBooleanText(params: any) {
@@ -33,12 +35,14 @@ const Observatories = () => {
   ];
 
   return <div>
-    <h1>Your Observatories</h1>
-    <DataTable endpointName="Observatories" columns={columns}>
-      <Button>
-        <Link href="/observatories/CreateObservatory">Create New Observatory</Link>
-      </Button>
-    </DataTable>
+    <DefaultContainer>
+      <Typography variant='h2'>Your Observatories</Typography>
+      <DataTable endpointName="Observatories" columns={columns}>
+        <Button>
+          <Link href="/observatories/CreateObservatory">Create New Observatory</Link>
+        </Button>
+      </DataTable>
+    </DefaultContainer>
   </div>
 }
 

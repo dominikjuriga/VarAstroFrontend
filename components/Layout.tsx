@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import useAuthentication from '../features/auth/hooks/useAuthentication'
+import { Container } from '@mui/material'
 
 const darkTheme = createTheme({
   palette: {
@@ -38,9 +39,9 @@ const Layout: React.FC<IProps> = ({ children }) => {
           <Topbar pageTitle={seo.pageTitle}>
             <Hamburger sidebarToggled={sidebarToggled} toggleSidebar={toggleSidebar} />
           </Topbar>
-          <div className="container">
+          <Container>
             {children}
-          </div>
+          </Container>
         </div>
         <ToastContainer />
       </div>

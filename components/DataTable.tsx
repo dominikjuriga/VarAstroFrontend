@@ -20,6 +20,7 @@ interface IDataTableProps {
 const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
   const { data, refetch, error, setData } = useApi({ path: endpointName, requiresAuth: true });
   const [selected, setSelected] = useState<GridSelectionModel>([]);
+  const [pageSize, setPageSize] = React.useState<number>(5);
   const { user } = useAuthentication();
 
   const handleProcessRowUpdateError = useCallback((error: Error) => {
@@ -107,6 +108,10 @@ const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
             <DataGrid autoHeight rows={data} columns={columns}
               experimentalFeatures={{ newEditingApi: true }}
               processRowUpdate={processRowUpdate}
+              pageSize={pageSize}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              rowsPerPageOptions={[5, 10, 15]}
+              pagination
               onProcessRowUpdateError={handleProcessRowUpdateError}
               onSelectionModelChange={(newSelectionModel) => {
                 setSelected(newSelectionModel);

@@ -3,6 +3,7 @@ import Link from "next/link"
 import s from "../../styles/Sidebar.module.css"
 import useAuthentication from '../../features/auth/hooks/useAuthentication'
 import { menu, unauthorizedUserMenu, authorizedUserMenu } from "./SidebarItems";
+import { AiOutlineUser, AiOutlineLogout } from "react-icons/ai"
 
 interface IProps {
   sidebarToggled: boolean
@@ -18,7 +19,7 @@ const Sidebar = ({ sidebarToggled }: IProps) => {
         (
           <li key={item.href}>
             <Link href={item.href}>
-              <a>
+              <a className={s.sidebarItem}>
                 <span title={item.title} className={s.sidebarIcon}>
                   {item.icon}
                 </span>
@@ -34,7 +35,7 @@ const Sidebar = ({ sidebarToggled }: IProps) => {
         {!user && unauthorizedUserMenu.map((item) => (
           <li key={item.href}>
             <Link href={item.href}>
-              <a>
+              <a className={s.sidebarItem}>
                 <span title={item.title} className={s.sidebarIcon}>
                   {item.icon}
                 </span>
@@ -49,7 +50,7 @@ const Sidebar = ({ sidebarToggled }: IProps) => {
         {user && authorizedUserMenu.map((item) => (
           <li key={item.href}>
             <Link href={item.href}>
-              <a>
+              <a className={s.sidebarItem}>
                 <span title={item.title} className={s.sidebarIcon}>
                   {item.icon}
                 </span>
@@ -62,8 +63,26 @@ const Sidebar = ({ sidebarToggled }: IProps) => {
         ))}
 
         {user && (<>
-          <li>{user.FirstName} {user.LastName}</li>
-          <li><button onClick={logout}>Log Out</button></li>
+          <li>
+            <span className={s.sidebarItem}>
+              <span title={"User"} className={s.sidebarIcon}>
+                <AiOutlineUser />
+              </span>
+              <span className={`${s.sidebarLabel} ${sidebarToggled ? s.sidebarLabelToggled : ""}`}>
+                {user.FirstName} {user.LastName}
+              </span>
+            </span>
+          </li>
+          <li>
+            <span className={s.sidebarItem}>
+              <span title={"User"} className={s.sidebarIcon}>
+                <AiOutlineLogout />
+              </span>
+              <button onClick={logout} className={`${s.sidebarLabel} ${sidebarToggled ? s.sidebarLabelToggled : ""}`}>
+                Log Out
+              </button>
+            </span>
+          </li>
         </>
         )}
       </ul>

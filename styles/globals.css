@@ -24,10 +24,6 @@ a {
   box-sizing: border-box;
 }
 
-.container {
-  padding: 1em;
-}
-
 .custom-form {
   display: flex;
   flex-direction: column;
@@ -53,11 +49,12 @@ a {
   padding: 1em;
 }
 
+/* 
 .MuiTablePagination-root .MuiTablePagination-selectLabel,
 .MuiTablePagination-root .MuiInputBase-root,
 .MuiTablePagination-root .MuiTablePagination-actions {
   display: none !important;
-}
+} */
 
 .MuiTablePagination-root .MuiTablePagination-displayedRows {
   margin-right: 1em;

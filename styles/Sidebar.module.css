@@ -2,7 +2,7 @@
   width: var(--sidebar-hidden-width);
   height: 100vh;
   background-color: var(--sidebar-bg);
-  padding: 1em;
+  padding: 1em 0;
   transition: var(--default-transition);
   overflow: hidden;
 }
@@ -17,20 +17,37 @@
   gap: 1rem;
 }
 
+.sidebar ul li {
+  width: 100%;
+  padding: 0 1em;
+  transition: var(--default-transition);
+
+}
+
+.sidebar ul li:hover {
+  background-color: rgb(71, 71, 71);
+}
+
 .sidebarToggled ul {
   align-items: flex-start;
 }
 
-.sidebar ul li a {
+.sidebar ul li .sidebarItem button {
+  border: none;
+  background-color: transparent;
+  font-size: 1em;
+  cursor: inherit;
+  padding: 0;
+}
+
+.sidebar ul li .sidebarItem {
   display: flex;
   flex-direction: row;
   align-items: center;
   font-size: 1.25em;
   transition: var(--default-transition);
-}
-
-.sidebar ul li a:hover {
-  color: rgb(190, 190, 190);
+  cursor: pointer;
+  justify-content: center;
 }
 
 .sidebarIcon svg {
@@ -39,6 +56,10 @@
 
 .sidebarToggled {
   width: var(--sidebar-toggled-width);
+}
+
+.sidebar.sidebarToggled ul li .sidebarItem {
+  justify-content: start;
 }
 
 .sidebarLabel {

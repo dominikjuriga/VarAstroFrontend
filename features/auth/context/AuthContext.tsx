@@ -110,14 +110,16 @@ export default function AuthProvider({
 }
 
 interface User {
-  FirstName: string,
-  LastName: string,
-  AuthToken: string,
+  FirstName: string;
+  LastName: string;
+  AuthToken: string;
+  DefaultObservatoryId?: number;
 }
 
 interface IDecodedToken {
   FirstName: string,
   LastName: string,
+  DefaultObservatoryId?: number;
 }
 
 interface AuthContextType {

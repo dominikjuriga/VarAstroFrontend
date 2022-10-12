@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { DataGrid, GridRowId, GridRowModel, GridSelectionModel } from '@mui/x-data-grid'
 import { toast } from "react-toastify"
 import Stack from '@mui/system/Stack';
@@ -18,7 +18,7 @@ interface IDataTableProps {
 }
 
 const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
-  const { data, loading, error, setData } = useApi({ path: endpointName, requiresAuth: true });
+  const { data, refetch, error, setData } = useApi({ path: endpointName, requiresAuth: true });
   const [selected, setSelected] = useState<GridSelectionModel>([]);
   const { user } = useAuthentication();
 
@@ -26,10 +26,10 @@ const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
     toast.error(error.message)
   }, []);
 
-  const deleteSelected = async (ids: GridRowId[]) => {
+  const deleteSelected = async () => {
     const response = await fetch(`${API_URL}/${endpointName}`, {
       method: HTTP.DELETE,
-      body: JSON.stringify(ids),
+      body: JSON.stringify(selected),
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${user?.AuthToken}`
@@ -38,8 +38,36 @@ const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
 
     const serviceResponse: IServiceResponse = await response.json();
     if (serviceResponse.success) {
-      setData(data.filter((item: IObservatory) => !ids.includes(item.id)))
+      setData(data.filter((item: IObservatory) => !selected.includes(item.id)))
       toast(`Removed ${serviceResponse.data} item(s).`)
+    }
+  }
+
+  const setDefault = async () => {
+    if (selected.length !== 1) {
+      toast.error("You can only select one observatory as default.")
+      return;
+    }
+    const response = await fetch(`${API_URL}/${endpointName}/default`, {
+      method: HTTP.POST,
+      body: JSON.stringify(selected[0]),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${user?.AuthToken}`
+      }
+    })
+    if (response?.ok) {
+      const serviceResponse = await response.json();
+
+      if (serviceResponse.success) {
+        toast(serviceResponse.message)
+        setSelected([]);
+        refetch();
+      } else {
+        toast.error(serviceResponse.message)
+      }
+    } else {
+      toast.error(`An error has occurred (${response.status}).`)
     }
   }
 
@@ -69,7 +97,8 @@ const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
     return (
       <Stack spacing={1}>
         <Stack direction={{ xs: "column", md: "row" }}>
-          <Button disabled={selected.length === 0} onClick={() => deleteSelected(selected)}>Delete Selected</Button>
+          <Button disabled={selected.length === 0} onClick={() => deleteSelected()}>Delete Selected</Button>
+          <Button disabled={selected.length !== 1} onClick={() => setDefault()}>Select as default</Button>
           {children}
         </Stack>
 

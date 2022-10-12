@@ -53,6 +53,16 @@ a {
   padding: 1em;
 }
 
+.MuiTablePagination-root .MuiTablePagination-selectLabel,
+.MuiTablePagination-root .MuiInputBase-root,
+.MuiTablePagination-root .MuiTablePagination-actions {
+  display: none !important;
+}
+
+.MuiTablePagination-root .MuiTablePagination-displayedRows {
+  margin-right: 1em;
+}
+
 
 @media (prefers-color-scheme: dark) {
   html {

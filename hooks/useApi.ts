@@ -16,8 +16,12 @@ const useApi = ({ path = "", requiresAuth = false, method = HTTP.GET }: IParamet
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const { user } = useAuthentication();
-  const router = useRouter();
-  useEffect(() => {
+
+  const refetch = () => {
+    fetchData();
+  }
+
+  const fetchData = () => {
     if (!requiresAuth || (requiresAuth && user !== undefined)) {
       fetch(`${API_URL}/${path}`, {
         headers: {
@@ -43,9 +47,13 @@ const useApi = ({ path = "", requiresAuth = false, method = HTTP.GET }: IParamet
     }
 
     setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchData();
   }, [path])
 
-  return { data, loading, error, setData }
+  return { data, loading, error, setData, refetch }
 }
 
 

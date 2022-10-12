@@ -5,6 +5,9 @@ import DataTable from "../../components/DataTable"
 import { GridColDef } from "@mui/x-data-grid";
 
 const Observatories = () => {
+  function getBooleanText(params: any) {
+    return params.row.isDefault ? "Yes" : "No";
+  }
   const columns: GridColDef[] = [
     {
       field: 'name',
@@ -19,6 +22,13 @@ const Observatories = () => {
       editable: true,
       minWidth: 200,
       flex: 1
+    },
+    {
+      field: 'isDefault',
+      headerName: 'Is Default',
+      minWidth: 200,
+      flex: 1,
+      valueGetter: getBooleanText
     },
   ];
 

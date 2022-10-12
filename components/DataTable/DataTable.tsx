@@ -1,15 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { DataGrid, GridRowId, GridRowModel, GridSelectionModel } from '@mui/x-data-grid'
+import React, { useState, useCallback } from 'react'
 import { toast } from "react-toastify"
+import { DataGrid, GridSelectionModel } from '@mui/x-data-grid'
 import Stack from '@mui/system/Stack';
 import Button from "@mui/material/Button"
-import { IObservatory } from "../models";
-import { API_URL } from "../static/API";
-import { HTTP } from "../static/HTTP";
-import useAuthentication from "../features/auth/hooks/useAuthentication"
-import { IServiceResponse } from "../models"
-import { useApi } from "../hooks/useApi"
-import Loader from './Loader';
+import Loader from '../Loader';
+import { useApi } from "../../hooks/useApi"
+import useAuthentication from "../../features/auth/hooks/useAuthentication"
+import useProcessChanges from "./useProcessChanges";
+import { API_URL } from "../../static/API";
+import { HTTP } from "../../static/HTTP";
+import { handleEntered, handleNo, handleYes } from "./ActionHandlers";
+import ConfirmDialog from './ConfirmDialog';
 
 interface IDataTableProps {
   columns: any[];
@@ -18,31 +19,17 @@ interface IDataTableProps {
 }
 
 const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
-  const { data, refetch, error, setData } = useApi({ path: endpointName, requiresAuth: true });
   const [selected, setSelected] = useState<GridSelectionModel>([]);
   const [pageSize, setPageSize] = React.useState<number>(5);
+  const [promiseArguments, setPromiseArguments] = React.useState<any>(null);
+  const { data, refetch, error, setData } = useApi({ path: endpointName, requiresAuth: true });
+  const { processRowUpdate, processRowDelete } = useProcessChanges();
   const { user } = useAuthentication();
+  const noButtonRef = React.useRef<HTMLButtonElement>(null);
 
   const handleProcessRowUpdateError = useCallback((error: Error) => {
     toast.error(error.message)
   }, []);
-
-  const deleteSelected = async () => {
-    const response = await fetch(`${API_URL}/${endpointName}`, {
-      method: HTTP.DELETE,
-      body: JSON.stringify(selected),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.AuthToken}`
-      }
-    })
-
-    const serviceResponse: IServiceResponse = await response.json();
-    if (serviceResponse.success) {
-      setData(data.filter((item: IObservatory) => !selected.includes(item.id)))
-      toast(`Removed ${serviceResponse.data} item(s).`)
-    }
-  }
 
   const setDefault = async () => {
     if (selected.length !== 1) {
@@ -72,24 +59,6 @@ const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
     }
   }
 
-  const processRowUpdate = React.useCallback(
-    async (newRow: GridRowModel) => {
-      let object = newRow;
-      delete object.user;
-      const response = await fetch(`${API_URL}/${endpointName}`, {
-        method: HTTP.PUT,
-        body: JSON.stringify(object),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${user?.AuthToken}`
-        }
-      });
-      const serviceResponse = await response.json()
-      toast("Changes Saved")
-      return serviceResponse.data;
-    }, [],);
-
-
   if (error) {
     <h1>Error</h1>
   }
@@ -98,16 +67,22 @@ const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
     return (
       <Stack spacing={1}>
         <Stack direction={{ xs: "column", md: "row" }}>
-          <Button disabled={selected.length === 0} onClick={() => deleteSelected()}>Delete Selected</Button>
+          <Button disabled={selected.length === 0} onClick={() => processRowDelete(setPromiseArguments)}>Delete Selected</Button>
           <Button disabled={selected.length !== 1} onClick={() => setDefault()}>Select as default</Button>
           {children}
         </Stack>
 
         <div style={{ display: 'flex', height: '100%' }}>
           <div style={{ flexGrow: 1 }}>
+            <ConfirmDialog promiseArguments={promiseArguments}
+              itemCount={selected.length}
+              noButtonRef={noButtonRef}
+              handleEntered={handleEntered}
+              handleNo={() => handleNo(promiseArguments, setPromiseArguments)}
+              handleYes={() => handleYes(endpointName, selected, user, refetch, promiseArguments, setPromiseArguments)} />
             <DataGrid autoHeight rows={data} columns={columns}
               experimentalFeatures={{ newEditingApi: true }}
-              processRowUpdate={processRowUpdate}
+              processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow, endpointName, user, setSelected)}
               pageSize={pageSize}
               onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
               rowsPerPageOptions={[5, 10, 15]}

@@ -19,13 +19,6 @@ const Observatories = () => {
       flex: 1
     },
     {
-      field: 'address',
-      headerName: 'Address',
-      editable: true,
-      minWidth: 200,
-      flex: 1
-    },
-    {
       field: 'isDefault',
       headerName: 'Is Default',
       minWidth: 200,
@@ -36,10 +29,10 @@ const Observatories = () => {
 
   return <div>
     <DefaultContainer>
-      <Typography variant='h2'>Your Observatories</Typography>
-      <DataTable endpointName="Observatories" columns={columns}>
+      <Typography variant='h2'>Your Devices</Typography>
+      <DataTable endpointName="Devices" columns={columns}>
         <Button>
-          <Link href="/observatories/CreateObservatory">Create New Observatory</Link>
+          <Link href="/Devices/CreateDevice">Create New Device</Link>
         </Button>
       </DataTable>
     </DefaultContainer>

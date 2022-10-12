@@ -49,7 +49,7 @@ const ObservatoryForm = () => {
     const data = await response.json();
     if (data.success) {
       toast(data.message)
-      router.push("/observatories")
+      router.push("/Observatories")
     } else {
       toast.error(data.message)
       setIsEditable(true)

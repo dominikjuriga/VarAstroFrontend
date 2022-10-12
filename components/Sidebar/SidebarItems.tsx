@@ -36,24 +36,14 @@ const authorizedUserMenu = [
   },
   {
     title: "Devices",
-    href: "/devices",
+    href: "/Devices",
     icon: <BiDevices />
   },
   {
     title: "Observatories",
-    href: "/observatories",
+    href: "/Observatories",
     icon: <BiDevices />
-  },
-  {
-    title: "Create Device",
-    href: "/devices/create",
-    icon: <BiCamera />
-  },
-  {
-    title: "Create Observatory",
-    href: "/observatories/create",
-    icon: <BiBuildingHouse />
-  },
+  }
 ]
 
 export { menu, unauthorizedUserMenu, authorizedUserMenu }

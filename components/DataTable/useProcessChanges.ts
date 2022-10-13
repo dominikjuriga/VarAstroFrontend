@@ -24,7 +24,7 @@ const useProcessChanges = () => {
   );
 
   const processRowUpdate = useCallback(
-    async (newRow: GridRowModel, oldRow: GridRowModel, endpointName: string, user: any, setSelected: React.Dispatch<React.SetStateAction<GridSelectionModel>>) => {
+    async (newRow: GridRowModel, oldRow: GridRowModel, endpointName: string, setSelected: React.Dispatch<React.SetStateAction<GridSelectionModel>>, jwt?: string) => {
       if (!objectsAreDifferent(newRow, oldRow)) {
         return oldRow;
       }
@@ -35,7 +35,7 @@ const useProcessChanges = () => {
         body: JSON.stringify(object),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${user?.AuthToken}`
+          "Authorization": `Bearer ${jwt}`
         }
       });
       const serviceResponse = await response.json()

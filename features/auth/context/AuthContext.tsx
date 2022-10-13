@@ -6,7 +6,8 @@ import { useCookies } from "react-cookie";
 import { isExpired, decodeToken } from "react-jwt";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import { IServiceResponse, isResponseSuccessful } from "../../../helpers";
+import { isResponseSuccessful } from "../../../helpers";
+import { IServiceResponse } from "../../../models"
 import { API_URL } from "../../../static/API";
 
 export const AuthContext = createContext<AuthContextType>(
@@ -19,6 +20,7 @@ export default function AuthProvider({
   children: ReactNode;
 }): JSX.Element {
   const [user, setUser] = useState<User>();
+  const [jwt, setJwt] = useState<string>();
   const [error, setError] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingInitial, setLoadingInitial] = useState<boolean>(true);
@@ -29,7 +31,6 @@ export default function AuthProvider({
 
   useEffect(() => {
     loginFromCookie()
-    setLoadingInitial(false);
   }, []);
 
   async function login(EmailAddress: string, Password: string) {
@@ -47,11 +48,15 @@ export default function AuthProvider({
     const serviceResponse: IServiceResponse = await response.json();
     if (isResponseSuccessful(serviceResponse)) {
       setUser({
-        FirstName: serviceResponse.data.user.firstName,
-        LastName: serviceResponse.data.user.lastName,
-        AuthToken: serviceResponse.data.authToken
+        firstName: serviceResponse.data.user.firstName,
+        lastName: serviceResponse.data.user.lastName,
+        defaultCameraDeviceId: serviceResponse.data.user.defaultCameraDeviceId,
+        defaultTelescopeDeviceId: serviceResponse.data.user.defaultTelescopeDeviceId,
+        defaultObservatoryId: serviceResponse.data.user.defaultObservatoryId,
       })
-      setCookie(AuthTokenCookieName, JSON.stringify(serviceResponse.data.authToken))
+      const authToken = serviceResponse.data.authToken;
+      setJwt(authToken);
+      setCookie(AuthTokenCookieName, authToken)
       toast(serviceResponse.message)
     } else {
       toast.error(serviceResponse.message)
@@ -60,21 +65,46 @@ export default function AuthProvider({
     router.push("/")
   }
 
-  function loginFromCookie() {
-    if (Object.keys(cookies).includes("AuthToken")) {
-      if (!isExpired(cookies.AuthToken)) {
-        const decodedToken: IDecodedToken | null = decodeToken(cookies.AuthToken)
-        if (decodedToken) {
-          setUser({
-            FirstName: decodedToken.FirstName,
-            LastName: decodedToken.LastName,
-            AuthToken: cookies.AuthToken
-          });
+  const refetchSessionData = async () => {
+    if (jwt) {
+      const user = await getSessionData(jwt)
+      if (user !== null) {
+        setUser(user)
+      }
+    }
+  }
+
+  const getSessionData = async (jwt: string) => {
+    const response = await fetch(`${API_URL}/Auth/session`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwt}`
+      }
+    })
+
+    const serviceResponse: IServiceResponse = await response.json();
+    if (serviceResponse.success) {
+      return serviceResponse.data;
+    }
+    return null;
+  }
+
+  async function loginFromCookie() {
+    if (Object.keys(cookies).includes(AuthTokenCookieName)) {
+      const authToken = cookies.AuthToken
+      if (!isExpired(authToken)) {
+        const user = await getSessionData(authToken)
+        if (user !== null) {
+          setUser(user)
+          setJwt(authToken)
+          console.log({ user })
         }
       } else {
         logout()
       }
     }
+
+    setLoadingInitial(false);
   }
 
   function signUp(email: string, name: string, password: string) {
@@ -95,11 +125,13 @@ export default function AuthProvider({
       loading,
       error,
       login,
+      refetchSessionData,
       signUp,
+      jwt,
       logout,
       loginFromCookie,
     }),
-    [user, loading, error]
+    [user, loading, error, jwt, refetchSessionData]
   );
 
   return (
@@ -110,16 +142,19 @@ export default function AuthProvider({
 }
 
 interface User {
-  FirstName: string;
-  LastName: string;
-  AuthToken: string;
-  DefaultObservatoryId?: number;
+  firstName: string;
+  lastName: string;
+  defaultCameraDeviceId?: number;
+  defaultTelescopeDeviceId?: number;
+  defaultObservatoryId?: number;
 }
 
 interface IDecodedToken {
-  FirstName: string,
-  LastName: string,
-  DefaultObservatoryId?: number;
+  firstName: string,
+  lastName: string,
+  defaultObservatoryId?: number;
+  defaultCameraDeviceId?: number;
+  defaultTelescopeDeviceId?: number;
 }
 
 interface AuthContextType {
@@ -128,6 +163,8 @@ interface AuthContextType {
   error?: any;
   login: (email: string, password: string) => void;
   signUp: (email: string, name: string, password: string) => void;
+  jwt?: string;
   logout: () => void;
+  refetchSessionData: () => void;
   loginFromCookie: () => void;
 }

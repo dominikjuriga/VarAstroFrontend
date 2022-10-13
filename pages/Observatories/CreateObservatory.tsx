@@ -34,7 +34,7 @@ const ObservatoryForm = () => {
       await handleSubmit(values);
     },
   });
-  const { user } = useAuthentication();
+  const { jwt, refetchSessionData } = useAuthentication();
   const router = useRouter();
 
   const handleSubmit = async (values: any) => {
@@ -42,13 +42,16 @@ const ObservatoryForm = () => {
       method: HTTP.POST,
       body: JSON.stringify(values),
       headers: {
-        "Authorization": `Bearer ${user?.AuthToken}`,
+        "Authorization": `Bearer ${jwt}`,
         "Content-Type": "application/json",
       },
     })
     const data = await response.json();
     if (data.success) {
       toast(data.message)
+      if (values.IsDefault) {
+        refetchSessionData()
+      }
       router.push("/Observatories")
     } else {
       toast.error(data.message)

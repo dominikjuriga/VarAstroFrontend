@@ -15,7 +15,7 @@ const useApi = ({ path = "", requiresAuth = false, method = HTTP.GET }: IParamet
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-  const { user } = useAuthentication();
+  const { user, jwt } = useAuthentication();
 
   const refetch = () => {
     fetchData();
@@ -25,7 +25,7 @@ const useApi = ({ path = "", requiresAuth = false, method = HTTP.GET }: IParamet
     if (!requiresAuth || (requiresAuth && user !== undefined)) {
       fetch(`${API_URL}/${path}`, {
         headers: {
-          "Authorization": `Bearer ${user?.AuthToken}`
+          "Authorization": `Bearer ${jwt}`
         },
         method
       })

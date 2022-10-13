@@ -69,7 +69,7 @@ const Sidebar = ({ sidebarToggled }: IProps) => {
                 <AiOutlineUser />
               </span>
               <span className={`${s.sidebarLabel} ${sidebarToggled ? s.sidebarLabelToggled : ""}`}>
-                {user.FirstName} {user.LastName}
+                {user.firstName} {user.lastName}
               </span>
             </span>
           </li>

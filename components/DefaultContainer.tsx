@@ -7,11 +7,11 @@ interface IDefaultContainer {
 
 const DefaultContainer = ({ children }: IDefaultContainer) => {
   return (
-    <Container>
-      <Stack spacing={2} marginTop={2}>
-        {children}
-      </Stack>
-    </Container>
+    // <Container>
+    <Stack spacing={2} marginTop={2}>
+      {children}
+    </Stack>
+    // </Container >
   )
 }
 

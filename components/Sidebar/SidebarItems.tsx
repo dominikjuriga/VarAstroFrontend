@@ -30,8 +30,8 @@ const unauthorizedUserMenu = [
 
 const authorizedUserMenu = [
   {
-    title: "New Light Curve",
-    href: "/lightcurves/upload",
+    title: "Light Curves",
+    href: "/LightCurves",
     icon: <BiPlus />
   },
   {

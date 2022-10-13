@@ -24,10 +24,10 @@ export const handleNo = (
 export const handleYes = async (
   endpointName: string,
   selected: GridSelectionModel,
-  user: any,
   refetch: () => void,
   promiseArguments: any,
   setPromiseArguments: React.Dispatch<React.SetStateAction<any>>,
+  jwt?: string,
 ) => {
   const { reject, resolve } = promiseArguments;
 
@@ -37,7 +37,7 @@ export const handleYes = async (
     body: JSON.stringify(selected),
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${user?.AuthToken}`
+      "Authorization": `Bearer ${jwt}`
     }
   })
 

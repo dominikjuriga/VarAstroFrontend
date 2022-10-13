@@ -24,7 +24,7 @@ const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
   const [promiseArguments, setPromiseArguments] = React.useState<any>(null);
   const { data, refetch, error, setData } = useApi({ path: endpointName, requiresAuth: true });
   const { processRowUpdate, processRowDelete } = useProcessChanges();
-  const { user } = useAuthentication();
+  const { jwt } = useAuthentication();
   const noButtonRef = React.useRef<HTMLButtonElement>(null);
 
   const handleProcessRowUpdateError = useCallback((error: Error) => {
@@ -41,7 +41,7 @@ const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
       body: JSON.stringify(selected[0]),
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.AuthToken}`
+        "Authorization": `Bearer ${jwt}`
       }
     })
     if (response?.ok) {
@@ -79,10 +79,10 @@ const DataTable = ({ columns, endpointName, children }: IDataTableProps) => {
               noButtonRef={noButtonRef}
               handleEntered={handleEntered}
               handleNo={() => handleNo(promiseArguments, setPromiseArguments)}
-              handleYes={() => handleYes(endpointName, selected, user, refetch, promiseArguments, setPromiseArguments)} />
+              handleYes={() => handleYes(endpointName, selected, refetch, promiseArguments, setPromiseArguments, jwt)} />
             <DataGrid autoHeight rows={data} columns={columns}
               experimentalFeatures={{ newEditingApi: true }}
-              processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow, endpointName, user, setSelected)}
+              processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow, endpointName, setSelected, jwt)}
               pageSize={pageSize}
               onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
               rowsPerPageOptions={[5, 10, 15]}

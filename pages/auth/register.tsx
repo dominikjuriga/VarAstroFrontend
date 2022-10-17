@@ -1,134 +1,125 @@
-import React, { useState } from 'react'
-import { useTranslation } from "next-i18next"
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import React, { useEffect } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { Button, TextField, Stack } from '@mui/material';
+import useAuthentication from '../../features/auth/hooks/useAuthentication';
+import { useRouter } from 'next/router';
 
-interface IFormProps {
-  username: string,
-  password: string,
-  name: string,
-  surname: string,
-  confirmPassword: string
-}
+const validationSchema = Yup.object({
+  EmailAddress: Yup
+    .string()
+    .email('Enter a valid email')
+    .required('Email is required'),
+  Password: Yup
+    .string()
+    .min(8, 'Password should be of minimum 8 characters length')
+    .required('Password is required'),
+  ConfirmPassword: Yup
+    .string()
+    .oneOf([Yup.ref("Password"), null], "Please, repeat the correct password.")
+    .required("You need to confirm your password."),
+  FirstName: Yup
+    .string()
+    .required("First name must have at least 2 characters.")
+    .min(2),
+  LastName: Yup
+    .string()
+    .required("Last name must have at least 2 characters.")
+    .min(2),
+});
 
 const Register = () => {
-  const [formState, setFormState] = useState<IFormProps>({
-    username: "",
-    password: "",
-    name: "",
-    surname: "",
-    confirmPassword: ""
-  })
+  const { user, register } = useAuthentication();
+  const handleSubmit = async (values: any) => {
+    await register(values);
+  }
+  const router = useRouter();
+  useEffect(() => {
+    if (user !== undefined) {
+      router.push("/")
+    }
+  }, [])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormState({
-      ...formState,
-      [e.target.name]: e.target.value
-    })
-  }
-
-  const validatePasswordsValid = (password: string, confirmPassword: string) => {
-    return password === confirmPassword && password.length >= 8
-  }
-
-  const handleSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault()
-    if (!validatePasswordsValid(formState.password, formState.confirmPassword)) return
-
-  }
-
-  const { t } = useTranslation("common")
-
-  const emailField = {
-    autoComplete: 'username',
-    minLength: 4,
-    name: 'username',
-    onChange: handleChange,
-    placeholder: 'user@example.com',
-    required: true,
-    type: "email",
-    value: formState.username
-  }
-  const nameField = {
-    autoComplete: 'name',
-    minLength: 2,
-    name: 'name',
-    onChange: handleChange,
-    placeholder: 'John',
-    required: true,
-    value: formState.name,
-    type: "text",
-  }
-  const surnameField = {
-    autoComplete: 'surname',
-    minLength: 2,
-    name: 'surname',
-    onChange: handleChange,
-    placeholder: 'Doe',
-    required: true,
-    type: "text",
-    value: formState.surname
-  }
-
-  const passwordField = {
-    autoComplete: 'password',
-    minLength: 8,
-    name: 'password',
-    onChange: handleChange,
-    required: true,
-    type: "password",
-    value: formState.password
-  }
-  const confirmPasswordField = {
-    autoComplete: 'confirmPassword',
-    minLength: 8,
-    name: 'confirmPassword',
-    onChange: handleChange,
-    required: true,
-    type: "password",
-    value: formState.confirmPassword
-  }
+  const formik = useFormik({
+    initialValues: {
+      EmailAddress: 'asd@gmail.com',
+      Password: 'asdasdasd',
+      ConfirmPassword: 'asdasdasd',
+      FirstName: 'asdasd',
+      LastName: 'asdasd'
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      handleSubmit(values)
+    },
+  });
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="custom-form">
-        <h2>Register new account</h2>
-        <div>
-          <label htmlFor="username">E-Mail</label>
-          <input {...emailField} />
-        </div>
-
-        <div>
-          <label htmlFor="name">Name</label>
-          <input {...nameField} />
-        </div>
-        <div>
-          <label htmlFor="surname">Surname</label>
-          <input {...surnameField} />
-        </div>
-
-
-        <div>
-          <label htmlFor="password">Password</label>
-          <input {...passwordField} />
-        </div>
-
-        <div>
-          <label htmlFor="password">Confirm Password</label>
-          <input {...confirmPasswordField} />
-        </div>
-
-        <button type="submit">{t("test")}</button>
+    <div>
+      <form onSubmit={formik.handleSubmit}>
+        <Stack spacing={2}>
+          <TextField
+            fullWidth
+            id="EmailAddress"
+            name="EmailAddress"
+            label="Email Address"
+            type="email"
+            value={formik.values.EmailAddress}
+            onChange={formik.handleChange}
+            error={formik.touched.EmailAddress && Boolean(formik.errors.EmailAddress)}
+            helperText={formik.touched.EmailAddress && formik.errors.EmailAddress}
+          />
+          <TextField
+            fullWidth
+            id="Password"
+            name="Password"
+            label="Password"
+            type="password"
+            value={formik.values.Password}
+            onChange={formik.handleChange}
+            error={formik.touched.Password && Boolean(formik.errors.Password)}
+            helperText={formik.touched.Password && formik.errors.Password}
+          />
+          <TextField
+            fullWidth
+            id="ConfirmPassword"
+            name="ConfirmPassword"
+            label="Confirm Password"
+            type="Password"
+            value={formik.values.ConfirmPassword}
+            onChange={formik.handleChange}
+            error={formik.touched.ConfirmPassword && Boolean(formik.errors.ConfirmPassword)}
+            helperText={formik.touched.ConfirmPassword && formik.errors.ConfirmPassword}
+          />
+          <TextField
+            fullWidth
+            id="FirstName"
+            name="FirstName"
+            label="First Name"
+            type="text"
+            value={formik.values.FirstName}
+            onChange={formik.handleChange}
+            error={formik.touched.FirstName && Boolean(formik.errors.FirstName)}
+            helperText={formik.touched.FirstName && formik.errors.FirstName}
+          />
+          <TextField
+            fullWidth
+            id="LastName"
+            name="LastName"
+            label="Last Name"
+            type="text"
+            value={formik.values.LastName}
+            onChange={formik.handleChange}
+            error={formik.touched.LastName && Boolean(formik.errors.LastName)}
+            helperText={formik.touched.LastName && formik.errors.LastName}
+          />
+          <Button color="primary" variant="contained" type="submit">
+            Submit
+          </Button>
+        </Stack>
       </form>
-    </>
-  )
-}
-
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'footer'])),
-    },
-  };
-}
+    </div>
+  );
+};
 
 export default Register

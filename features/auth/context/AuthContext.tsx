@@ -56,6 +56,7 @@ export default function AuthProvider({
       })
       const authToken = serviceResponse.data.authToken;
       setJwt(authToken);
+      console.log("attempting to set cookie")
       setCookie(AuthTokenCookieName, authToken, {
         sameSite: "none"
       })
@@ -92,9 +93,11 @@ export default function AuthProvider({
   }
 
   async function loginFromCookie() {
+    console.log(Object.keys(cookies).includes(AuthTokenCookieName))
     if (Object.keys(cookies).includes(AuthTokenCookieName)) {
       const authToken = cookies.AuthToken
       if (!isExpired(authToken)) {
+
         const user = await getSessionData(authToken)
         if (user !== null) {
           setUser(user)
@@ -109,10 +112,33 @@ export default function AuthProvider({
     setLoadingInitial(false);
   }
 
-  function signUp(email: string, name: string, password: string) {
+  interface IRegister {
+    email: string,
+    password: string,
+    confirmPassword: string,
+    firstName: string,
+    lastName: string
+  }
+
+  async function register(values: IRegister) {
     setLoading(true);
-    // TODO
+    const response = await fetch(`${API_URL}/Auth/register`, {
+      body: JSON.stringify(values),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+
+    const serviceResponse: IServiceResponse = await response.json();
+    if (isResponseSuccessful(serviceResponse)) {
+      toast(serviceResponse.message)
+      router.push("/auth/login")
+    } else {
+      toast.error(serviceResponse.message)
+    }
     setLoading(false);
+
   }
 
   function logout() {
@@ -127,8 +153,8 @@ export default function AuthProvider({
       loading,
       error,
       login,
+      register,
       refetchSessionData,
-      signUp,
       jwt,
       logout,
       loginFromCookie,
@@ -164,9 +190,17 @@ interface AuthContextType {
   loading: boolean;
   error?: any;
   login: (email: string, password: string) => void;
-  signUp: (email: string, name: string, password: string) => void;
+  register: (values: IRegisterValues) => void;
   jwt?: string;
   logout: () => void;
   refetchSessionData: () => void;
   loginFromCookie: () => void;
+}
+
+interface IRegisterValues {
+  emailAddress: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
 }

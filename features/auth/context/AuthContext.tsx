@@ -56,7 +56,9 @@ export default function AuthProvider({
       })
       const authToken = serviceResponse.data.authToken;
       setJwt(authToken);
-      setCookie(AuthTokenCookieName, authToken)
+      setCookie(AuthTokenCookieName, authToken, {
+        sameSite: "none"
+      })
       toast(serviceResponse.message)
     } else {
       toast.error(serviceResponse.message)

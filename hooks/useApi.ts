@@ -1,5 +1,5 @@
 import { API_URL } from "../static/API"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import useAuthentication from "../features/auth/hooks/useAuthentication";
@@ -53,7 +53,9 @@ const useApi = ({ path = "", requiresAuth = false, method = HTTP.GET }: IParamet
     fetchData();
   }, [path])
 
-  return { data, loading, error, setData, refetch }
+  return useMemo(() => {
+    return { data, loading, error, setData, refetch }
+  }, [path, data, loading])
 }
 
 

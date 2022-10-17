@@ -11,8 +11,6 @@ const Upload = () => {
   const { data: deviceData } = useApi({ path: "Devices" });
   const { user } = useAuthentication();
 
-  console.log({ user })
-
   const [file, setFile] = useState(null);
   const lightCurveFileRef = useRef(null);
   const handleLightCurveFileChange = (e: React.FormEvent<HTMLInputElement>) => {

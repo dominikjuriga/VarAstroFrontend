@@ -63,3 +63,38 @@ export interface IDeviceResponse {
 export interface IObservatoryResponse {
   data: IObservatory[];
 }
+
+export interface IUser {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface IDecodedToken {
+  firstName: string,
+  lastName: string,
+  defaultObservatoryId?: number;
+  defaultCameraDeviceId?: number;
+  defaultTelescopeDeviceId?: number;
+}
+
+export interface AuthContextType {
+  user?: IUser;
+  loading: boolean;
+  error?: any;
+  login: (email: string, password: string) => void;
+  register: (values: IRegisterValues) => void;
+  updateUser: (values: Partial<IRegisterValues>) => void;
+  jwt?: string;
+  logout: () => void;
+  refetchSessionData: () => void;
+  loginFromCookie: () => void;
+}
+
+export interface IRegisterValues {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
+}

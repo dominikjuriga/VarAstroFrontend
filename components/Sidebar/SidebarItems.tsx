@@ -10,7 +10,7 @@ const menu = [
   },
   {
     title: "Stars",
-    href: "/stars",
+    href: "/Stars",
     icon: <BiStar />
   },
 ]
@@ -18,12 +18,12 @@ const menu = [
 const unauthorizedUserMenu = [
   {
     title: "Log In",
-    href: "/auth/login",
+    href: "/Auth/Login",
     icon: <BiLogIn />
   },
   {
     title: "Register",
-    href: "/auth/register",
+    href: "/Auth/Register",
     icon: <BiUserPlus />
   },
 ]

@@ -20,10 +20,11 @@ const Login = () => {
   const { user, login } = useAuthentication();
   const handleSubmit = async (values: any) => {
     await login(values.EmailAddress, values.Password);
+    console.log({ user })
   }
   const router = useRouter();
   useEffect(() => {
-    if (user !== undefined) {
+    if (user) {
       router.push("/")
     }
   }, [])

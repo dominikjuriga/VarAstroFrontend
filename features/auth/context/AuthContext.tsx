@@ -7,8 +7,9 @@ import { isExpired, decodeToken } from "react-jwt";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { isResponseSuccessful } from "../../../helpers";
-import { IServiceResponse } from "../../../models"
+import { AuthContextType, IRegisterValues, IServiceResponse, IUser } from "../../../models"
 import { API_URL } from "../../../static/API";
+import { HTTP } from "../../../static/HTTP";
 
 export const AuthContext = createContext<AuthContextType>(
   {} as AuthContextType
@@ -19,7 +20,7 @@ export default function AuthProvider({
 }: {
   children: ReactNode;
 }): JSX.Element {
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<IUser>();
   const [jwt, setJwt] = useState<string>();
   const [error, setError] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -32,6 +33,14 @@ export default function AuthProvider({
   useEffect(() => {
     loginFromCookie()
   }, []);
+
+  const setUserFromObject = (userObject) => {
+    setUser({
+      firstName: userObject.firstName,
+      lastName: userObject.lastName,
+      email: userObject.email
+    })
+  }
 
   async function login(EmailAddress: string, Password: string) {
     setLoading(true);
@@ -47,13 +56,7 @@ export default function AuthProvider({
 
     const serviceResponse: IServiceResponse = await response.json();
     if (isResponseSuccessful(serviceResponse)) {
-      setUser({
-        firstName: serviceResponse.data.user.firstName,
-        lastName: serviceResponse.data.user.lastName,
-        defaultCameraDeviceId: serviceResponse.data.user.defaultCameraDeviceId,
-        defaultTelescopeDeviceId: serviceResponse.data.user.defaultTelescopeDeviceId,
-        defaultObservatoryId: serviceResponse.data.user.defaultObservatoryId,
-      })
+      setUserFromObject(serviceResponse.data.user);
       const authToken = serviceResponse.data.authToken;
       setJwt(authToken);
       console.log("attempting to set cookie")
@@ -61,11 +64,11 @@ export default function AuthProvider({
         sameSite: "none"
       })
       toast(serviceResponse.message)
+      router.push("/")
     } else {
       toast.error(serviceResponse.message)
     }
     setLoading(false);
-    router.push("/")
   }
 
   const refetchSessionData = async () => {
@@ -90,6 +93,24 @@ export default function AuthProvider({
       return serviceResponse.data;
     }
     return null;
+  }
+
+  async function updateUser(values: Partial<IRegisterValues>) {
+    const response = await fetch(`${API_URL}/Users`, {
+      method: HTTP.PUT,
+      body: JSON.stringify(values),
+      headers: {
+        "Authorization": `Bearer ${jwt}`,
+        "Content-Type": "application/json"
+      }
+    })
+    const serviceResponse: IServiceResponse = await response.json();
+    if (serviceResponse.success) {
+      toast(serviceResponse.message)
+      setUserFromObject(serviceResponse.data)
+    } else {
+      toast.error(serviceResponse.message)
+    }
   }
 
   async function loginFromCookie() {
@@ -122,7 +143,7 @@ export default function AuthProvider({
 
   async function register(values: IRegister) {
     setLoading(true);
-    const response = await fetch(`${API_URL}/Auth/register`, {
+    const response = await fetch(`${API_URL}/Auth/Register`, {
       body: JSON.stringify(values),
       method: "POST",
       headers: {
@@ -133,7 +154,7 @@ export default function AuthProvider({
     const serviceResponse: IServiceResponse = await response.json();
     if (isResponseSuccessful(serviceResponse)) {
       toast(serviceResponse.message)
-      router.push("/auth/login")
+      router.push("/Auth/Login")
     } else {
       toast.error(serviceResponse.message)
     }
@@ -155,6 +176,7 @@ export default function AuthProvider({
       login,
       register,
       refetchSessionData,
+      updateUser,
       jwt,
       logout,
       loginFromCookie,
@@ -169,38 +191,3 @@ export default function AuthProvider({
   );
 }
 
-interface User {
-  firstName: string;
-  lastName: string;
-  defaultCameraDeviceId?: number;
-  defaultTelescopeDeviceId?: number;
-  defaultObservatoryId?: number;
-}
-
-interface IDecodedToken {
-  firstName: string,
-  lastName: string,
-  defaultObservatoryId?: number;
-  defaultCameraDeviceId?: number;
-  defaultTelescopeDeviceId?: number;
-}
-
-interface AuthContextType {
-  user?: User;
-  loading: boolean;
-  error?: any;
-  login: (email: string, password: string) => void;
-  register: (values: IRegisterValues) => void;
-  jwt?: string;
-  logout: () => void;
-  refetchSessionData: () => void;
-  loginFromCookie: () => void;
-}
-
-interface IRegisterValues {
-  emailAddress: string;
-  password: string;
-  confirmPassword: string;
-  firstName: string;
-  lastName: string;
-}

@@ -64,14 +64,17 @@ const Sidebar = ({ sidebarToggled }: IProps) => {
 
         {user && (<>
           <li>
-            <span className={s.sidebarItem}>
-              <span title={"User"} className={s.sidebarIcon}>
-                <AiOutlineUser />
-              </span>
-              <span className={`${s.sidebarLabel} ${sidebarToggled ? s.sidebarLabelToggled : ""}`}>
-                {user.firstName} {user.lastName}
-              </span>
-            </span>
+            <Link href="/User/Profile">
+              <a className={s.sidebarItem}>
+                <span title="User Profile" className={s.sidebarIcon}>
+                  <AiOutlineUser />
+                </span>
+                <span className={`${s.sidebarLabel} ${sidebarToggled ? s.sidebarLabelToggled : ""}`}>
+                  {user.firstName} {user.lastName}
+                </span>
+              </a>
+            </Link>
+
           </li>
           <li>
             <span className={s.sidebarItem}>

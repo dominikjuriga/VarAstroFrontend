@@ -1,9 +1,21 @@
-import React from 'react'
+import { Typography } from '@mui/material';
+import React, { useState } from 'react'
 import StepOne from './Upload/StepOne'
+import StepTwo from './Upload/StepTwo'
 
 const Upload = () => {
+  const [star, setStar] = useState();
+
   return (
-    <StepOne></StepOne>
+    <>
+      <Typography variant="h2">Upload A New Light Curve</Typography>
+      {star === undefined && (
+        <StepOne setStar={setStar}></StepOne>
+      )}
+      {star !== undefined && (
+        <StepTwo></StepTwo>
+      )}
+    </>
   )
 }
 

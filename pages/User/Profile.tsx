@@ -1,3 +1,4 @@
+import { Divider, Link, Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useState } from "react"
@@ -13,11 +14,17 @@ const Profile = () => {
   }
   if (user) {
     return (
-      <>
+      <Stack spacing={2}>
         <Typography variant="h2">Your Profile</Typography>
-        <Button onClick={toggleEdit}>Edit Details</Button>
+        <Button onClick={toggleEdit} variant="contained">Edit Details</Button>
         <UserForm user={user} disabled={!isEditing} />
-      </>
+        <Divider></Divider>
+        <Button variant="outlined">
+          <Link href="/User/Password">
+            <a>Change Password</a>
+          </Link>
+        </Button>
+      </Stack>
     )
   }
 

@@ -47,12 +47,14 @@ export interface IObservatory {
   id: number;
   name: string;
   address?: string;
+  isDefault: boolean;
 }
 
 export interface IDevice {
   id: number;
-  title: string;
-  deviceType: string;
+  name: string;
+  type: string;
+  isDefault: boolean;
 }
 
 export interface IDeviceResponse {

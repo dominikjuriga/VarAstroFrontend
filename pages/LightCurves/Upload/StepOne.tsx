@@ -1,106 +1,109 @@
-import React, { useRef, useState } from 'react'
-import { Formik, Form, Field } from 'formik';
-import { TextField } from 'formik-mui';
-import { Button, Divider, Stack } from '@mui/material';
-import { FormControl } from "@mui/material"
-import Typography from '@mui/material/Typography';
-import Stepper from "../../../components/Stepper/Stepper"
+import { Button, Typography } from '@mui/material'
+import Stack from '@mui/material/Stack'
+import { Field, Form, Formik } from 'formik'
+import { TextField } from 'formik-mui'
+import React, { useState } from 'react'
+import { toast } from 'react-toastify'
+import Loader from '../../../components/Loader'
+import { useApi } from '../../../hooks/useApi'
+import { IServiceResponse } from '../../../models'
+import { API_URL } from '../../../static/API'
+import { HTTP } from '../../../static/HTTP'
+import { DataGrid, GridColDef, GridSelectionModel, GridValueGetterParams } from '@mui/x-data-grid';
 
-interface Values {
-  email: string;
-  password: string;
-}
+const columns: GridColDef[] = [
+  {
+    field: 'name',
+    headerName: 'Star Name',
+    minWidth: 150,
+  },
+];
 
-const StepOne = () => {
-  const [file, setFile] = useState();
-  const [star, setStar] = useState();
-  const fileInputRef = useRef<HTMLFormElement>();
-  const handleFileChange = (e: React.FormEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    if (e.target.files) {
-      setFile(e.target.files[0])
-    } else {
-      setFile(undefined)
+const StepOne = ({ setStar }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [starList, setStarList] = useState();
+  const [selected, setSelected] = useState<GridSelectionModel>([]);
+  const selectStar = () => {
+    if (selected.length !== 1) {
+      toast.error("You need to select one star.")
+      return;
     }
-  }
-
-  const clickHiddenFileInput = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (fileInputRef) {
-      fileInputRef?.current.click();
+    if (!starList) {
+      return
     }
-  }
-  const removeFile = () => {
-    console.log(fileInputRef.current)
-    fileInputRef.current.value = "";
-    setFile(undefined);
+    const star = starList.find((s) => s.id === selected[0])
+    if (star) {
+      setStar(star);
+    }
   }
   return (
     <>
-      <Stack spacing={2}>
-        <Typography variant="h2">
-          Upload A New Light Curve
-        </Typography>
-        <Formik
-          initialValues={{
-            starName: '',
-          }}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              setSubmitting(false);
-              // alert(JSON.stringify(values, null, 2));
-              setStar({
-                name: "Vega"
-              })
-            }, 500);
-          }}
-        >
-          {({ submitForm, isSubmitting }) => (
-            <Form>
+
+      <Formik
+        initialValues={{
+          name: ''
+        }}
+        onSubmit={async (values, { setSubmitting }) => {
+          // updateUser(values)
+          setLoading(true);
+          const response = await fetch(`${API_URL}/Stars/query`, {
+            method: HTTP.POST,
+            body: JSON.stringify(values.name),
+            headers: {
+              "Content-Type": "application/json"
+            }
+          })
+          const serviceResponse: IServiceResponse = await response.json();
+          if (serviceResponse.success) {
+            setStarList(serviceResponse.data)
+          } else {
+            toast.error(serviceResponse.message)
+          }
+          setLoading(false);
+        }}
+      >
+        {({ values, submitForm, resetForm, isSubmitting, touched, errors }) => (
+
+          <Form>
+            {(
               <Stack spacing={2}>
+
                 <Field
                   component={TextField}
-                  name="starName"
+                  name="name"
                   type="text"
-                  disabled={file || star !== undefined}
                   label="Star Name"
                 />
-                <Divider>or</Divider>
-                {file && (
-                  <Stack direction="row">
-                    <p>{file.name}</p>
-                    <Button onClick={removeFile}>X</Button>
-                  </Stack>
-                )}
-                <input ref={fileInputRef} type="file" name="" hidden onChange={handleFileChange} id="" />
-                <Button disabled={star !== undefined} variant="outlined" onClick={clickHiddenFileInput}>Select A File</Button>
 
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled={isSubmitting || star !== undefined}
-                  onClick={submitForm}
-                >
-                  Submit
-                </Button>
-
-                {star !== undefined && (
-                  <>
-                    <Typography>Star {star.name}</Typography>
-                    <Field
-                      component={TextField}
-                      name="starName"
-                      type="text"
-                      disabled={file || star !== undefined}
-                      label="Star Name"
-                    />
-                  </>
+                {loading && <Loader />}
+                {!loading && (
+                  <Button type="submit" variant='contained'>Search Stars</Button>
                 )}
+
               </Stack>
-            </Form>
-          )}
-        </Formik>
-      </Stack>
+            )}
+
+            {starList && (
+              <>
+                <DataGrid
+                  rows={starList}
+                  columns={columns}
+                  autoHeight
+                  onSelectionModelChange={(newSelectionModel) => {
+                    setSelected(newSelectionModel);
+                  }}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  checkboxSelection
+                  disableSelectionOnClick
+                  experimentalFeatures={{ newEditingApi: true }}
+                />
+                <Button disabled={selected.length !== 1} onClick={selectStar}>Select star</Button>
+              </>
+            )}
+          </Form>
+        )}
+      </Formik >
     </>
   )
 }

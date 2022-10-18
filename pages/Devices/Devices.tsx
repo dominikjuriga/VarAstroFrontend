@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Button from "@mui/material/Button"
-import DataTable from "../../components/DataTable"
+import EditableDataTable from "../../components/EditableDataTable"
 import { GridColDef } from "@mui/x-data-grid";
 import DefaultContainer from "../../components/DefaultContainer";
 import { Typography } from "@mui/material";
@@ -36,11 +36,11 @@ const Observatories = () => {
   return <div>
     <DefaultContainer>
       <Typography variant='h2'>Your Devices</Typography>
-      <DataTable endpointName="Devices" columns={columns}>
+      <EditableDataTable endpointName="Devices" columns={columns}>
         <Button>
           <Link href="/Devices/CreateDevice">Create New Device</Link>
         </Button>
-      </DataTable>
+      </EditableDataTable>
     </DefaultContainer>
   </div>
 }

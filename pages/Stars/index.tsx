@@ -13,7 +13,7 @@ const Stars = () => {
   return (
     <div>
       {data && data.map((star: IStar) => (
-        <Link key={star.id} href={`/stars/${star.id.toString()}`}>{star.name}</Link>
+        <Link key={star.id} href={`/Stars/${star.id.toString()}`}>{star.name}</Link>
       ))}
     </div>
   )

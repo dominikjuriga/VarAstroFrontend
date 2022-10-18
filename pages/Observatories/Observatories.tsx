@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Button from "@mui/material/Button"
-import DataTable from "../../components/DataTable"
+import DataTable from "../../components/EditableDataTable"
 import { GridColDef } from "@mui/x-data-grid";
 import DefaultContainer from "../../components/DefaultContainer";
 import { Typography } from "@mui/material";

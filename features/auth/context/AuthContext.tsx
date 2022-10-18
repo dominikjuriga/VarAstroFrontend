@@ -34,7 +34,7 @@ export default function AuthProvider({
     loginFromCookie()
   }, []);
 
-  const setUserFromObject = (userObject) => {
+  const setUserFromObject = (userObject: Partial<IRegister>) => {
     setUser({
       firstName: userObject.firstName,
       lastName: userObject.lastName,

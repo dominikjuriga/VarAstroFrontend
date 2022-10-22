@@ -1,8 +1,9 @@
 import { Button, Stack } from '@mui/material';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-mui';
-import React from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify';
+import SubmitButton from '../../components/SubmitButton';
 import useAuthentication from '../../features/auth/hooks/useAuthentication';
 import { IServiceResponse, IUser } from '../../models';
 import { API_URL } from '../../static/API';
@@ -10,11 +11,11 @@ import { HTTP } from '../../static/HTTP';
 
 interface IUserForm {
   user: IUser;
-  disabled: boolean;
+  isEditing: boolean;
 }
 
-
-const UserForm = ({ user, disabled }: IUserForm) => {
+const UserForm = ({ user, isEditing }: IUserForm) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { updateUser } = useAuthentication();
   return (
 
@@ -24,11 +25,13 @@ const UserForm = ({ user, disabled }: IUserForm) => {
         firstName: user.firstName,
         lastName: user.lastName
       }}
-      onSubmit={async (values, { setSubmitting }) => {
-        updateUser(values)
+      onSubmit={async (values) => {
+        setIsSubmitting(true);
+        await updateUser(values)
+        setIsSubmitting(false);
       }}
     >
-      {({ values, submitForm, resetForm, isSubmitting, touched, errors }) => (
+      {({ values, submitForm, resetForm, touched, errors }) => (
 
         <Form>
           <Stack spacing={2}>
@@ -44,19 +47,19 @@ const UserForm = ({ user, disabled }: IUserForm) => {
               component={TextField}
               name="firstName"
               type="text"
-              disabled={disabled}
+              disabled={!isEditing}
               label="First Name"
             />
             <Field
               component={TextField}
               name="lastName"
               type="text"
-              disabled={disabled}
+              disabled={!isEditing}
               label="Last Name"
             />
 
-            {!disabled && (
-              <Button type="submit" variant='contained'>Save Changes</Button>
+            {isEditing && (
+              <SubmitButton isSubmitting={isSubmitting} buttonText={`Save Changes`} />
             )}
 
           </Stack>

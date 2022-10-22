@@ -24,15 +24,21 @@ const Slug = () => {
       flex: 1
     },
     {
-      field: 'rightAscension',
+      field: 'rightAscensionReadable',
       headerName: 'Right Ascension',
       minWidth: 200,
+      valueGetter(params) {
+        return `${params.row.rightAscensionReadable} (${params.row.rightAscension}°)`
+      },
       flex: 1
     },
     {
       field: 'declination',
       headerName: 'Declination',
       minWidth: 200,
+      valueGetter(params) {
+        return `${params.row.declinationReadable} (${params.row.declination}°)`
+      },
       flex: 1
     },
   ];

@@ -7,6 +7,9 @@
   display: inline-block;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
+}
+
+.positioned {
   position: relative;
   top: 5em;
   left: 50%;

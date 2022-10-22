@@ -4,3 +4,7 @@ export const HTTP = {
   PUT: "PUT",
   DELETE: "DELETE",
 }
+
+export const ContentTypeJson = {
+  "Content-Type": "application/json"
+}

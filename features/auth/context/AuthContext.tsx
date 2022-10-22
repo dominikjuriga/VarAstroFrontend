@@ -46,7 +46,7 @@ export default function AuthProvider({
     setLoading(true);
 
     const userLogin = { EmailAddress, Password }
-    const response = await fetch(`${API_URL}/Auth/login`, {
+    const response = await fetch(`${API_URL}/Auth/Login`, {
       body: JSON.stringify(userLogin),
       method: "POST",
       headers: {
@@ -81,7 +81,7 @@ export default function AuthProvider({
   }
 
   const getSessionData = async (jwt: string) => {
-    const response = await fetch(`${API_URL}/Auth/session`, {
+    const response = await fetch(`${API_URL}/Auth/Session`, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${jwt}`

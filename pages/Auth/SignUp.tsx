@@ -28,7 +28,7 @@ const validationSchema = Yup.object({
     .min(2),
 });
 
-const Register = () => {
+const SignUp = () => {
   const { user, register } = useAuthentication();
   const handleSubmit = async (values: any) => {
     await register(values);
@@ -122,4 +122,4 @@ const Register = () => {
   );
 };
 
-export default Register
+export default SignUp

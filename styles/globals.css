@@ -24,6 +24,11 @@ a {
   box-sizing: border-box;
 }
 
+/* Making the select boxes full width..  */
+.MuiGrid-root.MuiGrid-item>.MuiFormControl-root {
+  width: 100%;
+}
+
 .custom-form {
   display: flex;
   flex-direction: column;

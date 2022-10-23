@@ -8,9 +8,10 @@ import Button from '@mui/material/Button';
 import * as Yup from "yup"
 import { toast } from 'react-toastify';
 import { API_URL } from '../../../static/API';
-import { IObservatory, IDevice } from '../../../models';
+import { IObservatory, IDevice, IServiceResponse } from '../../../models';
 import { HTTP } from '../../../static/HTTP';
 import useAuthentication from '../../../features/auth/hooks/useAuthentication';
+import { useRouter } from 'next/router';
 
 
 interface IUploadForm {
@@ -19,9 +20,11 @@ interface IUploadForm {
 }
 
 const validationSchema = Yup.object({
-  CameraId: Yup
+  Camera: Yup
     .number(),
-  TelescopeId: Yup
+  Observatory: Yup
+    .number(),
+  Telescope: Yup
     .number(),
   JulianDateFormat: Yup
     .string()
@@ -29,19 +32,26 @@ const validationSchema = Yup.object({
   PhotometricSystem: Yup.string().oneOf(["instrumental", "standard"]).required(),
   Aperture: Yup.number().required("Please, specify the aperture value"),
   Filter: Yup.string().required("Please, specify the filter type (or none)"),
+  ParsedFileId: Yup.number().required(),
   IsPublic: Yup.boolean(),
 });
 
 const UploadForm = ({ deviceData, observatoryData }: IUploadForm) => {
   const [defaultCameraId, defaultTelescopeId] = useMemo(() => {
-    const CameraId = deviceData.find((d) => d.isDefault === true && d.type === "camera")?.id;
-    const TelescopeId = deviceData.find((d) => d.isDefault === true && d.type === "telescope")?.id
-    return [CameraId ? CameraId : "", TelescopeId ? TelescopeId : ""]
+    if (deviceData) {
+      const CameraId = deviceData.find((d) => d.isDefault === true && d.type === "camera")?.id;
+      const TelescopeId = deviceData.find((d) => d.isDefault === true && d.type === "telescope")?.id
+      return [CameraId ? CameraId : "", TelescopeId ? TelescopeId : ""]
+    }
+    return ["", ""]
   }, [deviceData]);
   const defaultObservatoryId = useMemo(() => {
-    const observatory = observatoryData.find((o) => o.isDefault === true)
-    return observatory ? observatory.id : ""
+    if (observatoryData) {
+      const observatory = observatoryData.find((o) => o.isDefault === true)
+      return observatory ? observatory.id : ""
+    }
   }, [observatoryData])
+  const router = useRouter();
   const [file, setFile] = useState();
   const fileInputRef = useRef();
   const { jwt } = useAuthentication();
@@ -51,6 +61,7 @@ const UploadForm = ({ deviceData, observatoryData }: IUploadForm) => {
     ObservatoryId: defaultObservatoryId,
     JulianDateFormat: "heliocentric",
     PhotometricSystem: "instrumental",
+    ParsedFileId: "",
     Aperture: "",
     Filter: "",
     IsPublic: true
@@ -84,6 +95,7 @@ const UploadForm = ({ deviceData, observatoryData }: IUploadForm) => {
         if (tmp.Filter) {
           newInitial.Filter = tmp.Filter
         }
+        newInitial.ParsedFileId = serviceResponse.data.id;
         setInitialValues(newInitial)
       } else {
         toast.error(serviceResponse.message)
@@ -122,171 +134,181 @@ const UploadForm = ({ deviceData, observatoryData }: IUploadForm) => {
   }
 
 
-  if (!deviceData) {
-    return <Loader />
-  }
-  return (
-    <Formik
-      enableReinitialize
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={async (values) => {
-        if (!file) {
-          toast.error("Please insert a file")
-          return
-        }
-        const response = await fetch(`${API_URL}/LightCurves`, {
-          method: HTTP.POST,
-          body: JSON.stringify(values),
-          headers: {
-            "Authorization": `Bearer ${jwt}`,
-            "Content-Type": "application/json"
+  if (deviceData && observatoryData) {
+    return (
+      <Formik
+        enableReinitialize
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={async (values) => {
+          if (!file) {
+            toast.error("Please insert a file")
+            return
           }
-        })
-        const serviceResponse = await response.json()
-        console.log({ serviceResponse })
-      }}
-    >
-      {({ values, submitForm, isSubmitting, touched, errors }) => (
-        <Form>
-          <Grid container spacing={2}>
+          const response = await fetch(`${API_URL}/LightCurves`, {
+            method: HTTP.POST,
+            body: JSON.stringify(values),
+            headers: {
+              "Authorization": `Bearer ${jwt}`,
+              "Content-Type": "application/json"
+            }
+          })
+          const serviceResponse: IServiceResponse = await response.json()
+          if (serviceResponse.success) {
+            toast(serviceResponse.message);
+            router.push(`/LightCurves/${serviceResponse.data.id}`)
+          } else {
+            toast.error(serviceResponse.message);
 
-            <Grid item xs={12}>
-              <Divider>Observation File</Divider>
-            </Grid>
+          }
+        }}
+      >
+        {({ values, submitForm, isSubmitting, touched, errors }) => (
+          <Form>
+            <Grid container spacing={2}>
 
-            <Grid item xs={12}>
-              <Tooltip title="Metadata will be automatically filled in if the file is in correct format">
-                <Button fullWidth variant="outlined" onClick={clickHiddenFileInput}>Select A File</Button>
-              </Tooltip>
-            </Grid>
+              <Grid item xs={12}>
+                <Divider>Observation File</Divider>
+                <Field
+                  type="text"
+                  hidden
+                  name="ParsedFileId" />
+              </Grid>
 
-            <Grid item xs={12}>
-              {file && (
-                <Stack direction="row" display="flex" justifyContent="space-between">
-                  <span>{file.name}</span>
-                  <Button onClick={removeFile}>X</Button>
-                </Stack>
-              )}
-              <input ref={fileInputRef} type="file" hidden onChange={handleFileChange} />
-            </Grid>
+              <Grid item xs={12}>
+                <Tooltip title="Metadata will be automatically filled in if the file is in correct format">
+                  <Button fullWidth variant="outlined" onClick={clickHiddenFileInput}>Select A File</Button>
+                </Tooltip>
+              </Grid>
 
-            <Grid item xs={12}>
-              <Divider>Observation Metadata</Divider>
-            </Grid>
+              <Grid item xs={12}>
+                {file && (
+                  <Stack direction="row" display="flex" justifyContent="space-between">
+                    <span>{file.name}</span>
+                    <Button onClick={removeFile}>X</Button>
+                  </Stack>
+                )}
+                <input ref={fileInputRef} type="file" hidden onChange={handleFileChange} />
+              </Grid>
 
-            <Grid item xs={12} md={6}>
-              <Field
-                component={Select}
-                type="text"
-                error={touched['CameraId'] && !!errors['CameraId']}
-                label="Camera"
-                name="CameraId"
-                fullWidth
-              >
-                <MenuItem value="">{"Not Specified"}</MenuItem>
-                {deviceData.filter((device) => device.type === "camera").map((d) => (
-                  <MenuItem key={d.id} value={d.id}>{d.name}</MenuItem>
-                ))}
-              </Field>
-            </Grid>
+              <Grid item xs={12}>
+                <Divider>Observation Metadata</Divider>
+              </Grid>
 
-            <Grid item xs={12} md={6}>
-              <Field
-                component={Select}
-                type="text"
-                fullWidth
-                label="Telescope"
-                name="TelescopeId"
-              >
-                <MenuItem value="">{"Not Specified"}</MenuItem>
-                {deviceData.filter((device) => device.type === "telescope").map((d) => (
-                  <MenuItem key={d.id} value={d.id}>{d.name}</MenuItem>
-                ))}
-              </Field>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Field
-                component={Select}
-                type="text"
-                fullWidth
-                label="Observatory"
-                name="ObservatoryId"
-              >
-                <MenuItem value="">{"Not Specified"}</MenuItem>
-                {observatoryData.map((d) => (
-                  <MenuItem key={d.id} value={d.id}>{d.name}</MenuItem>
-                ))}
-              </Field>
-            </Grid>
+              <Grid item xs={12} md={6}>
+                <Field
+                  component={Select}
+                  type="text"
+                  fullWidth
+                  error={touched['CameraId'] && !!errors['CameraId']}
+                  label="Camera"
+                  name="CameraId"
+                >
+                  <MenuItem value="">{"Not Specified"}</MenuItem>
+                  {deviceData.filter((device) => device.type === "camera").map((d) => (
+                    <MenuItem key={d.id} value={d.id}>{d.name}</MenuItem>
+                  ))}
+                </Field>
+              </Grid>
 
-            <Grid item xs={12} md={6}>
-              <Field
-                component={Select}
-                type="text"
-                fullWidth
-                label="Julian Date Format"
-                name="JulianDateFormat"
-              >
-                <MenuItem value="heliocentric">Heliocentric</MenuItem>
-                <MenuItem value="geocentric">Geocentric</MenuItem>
-              </Field>
-            </Grid>
+              <Grid item xs={12} md={6}>
+                <Field
+                  component={Select}
+                  type="text"
+                  fullWidth
+                  label="Telescope"
+                  name="TelescopeId"
+                >
+                  <MenuItem value="">{"Not Specified"}</MenuItem>
+                  {deviceData.filter((device) => device.type === "telescope").map((d) => (
+                    <MenuItem key={d.id} value={d.id}>{d.name}</MenuItem>
+                  ))}
+                </Field>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Field
+                  component={Select}
+                  type="text"
+                  fullWidth
+                  label="Observatory"
+                  name="ObservatoryId"
+                >
+                  <MenuItem value="">{"Not Specified"}</MenuItem>
+                  {observatoryData.map((d) => (
+                    <MenuItem key={d.id} value={d.id}>{d.name}</MenuItem>
+                  ))}
+                </Field>
+              </Grid>
 
-            <Grid item xs={12} md={6}>
-              <Field
-                component={Select}
-                type="text"
-                fullWidth
-                label="Photometric System"
-                name="PhotometricSystem"
-              >
-                <MenuItem value="instrumental">Instrumental</MenuItem>
-                <MenuItem value="standard">Standard</MenuItem>
-              </Field>
-            </Grid>
+              <Grid item xs={12} md={6}>
+                <Field
+                  component={Select}
+                  type="text"
+                  fullWidth
+                  label="Julian Date Format"
+                  name="JulianDateFormat"
+                >
+                  <MenuItem value="heliocentric">Heliocentric</MenuItem>
+                  <MenuItem value="geocentric">Geocentric</MenuItem>
+                </Field>
+              </Grid>
 
-            <Grid item xs={12} md={6}>
-              <Field
-                component={TextField}
-                type="text"
-                fullWidth
-                label="Aperture"
-                name="Aperture"
-              />
-            </Grid>
+              <Grid item xs={12} md={6}>
+                <Field
+                  component={Select}
+                  type="text"
+                  fullWidth
+                  label="Photometric System"
+                  name="PhotometricSystem"
+                >
+                  <MenuItem value="instrumental">Instrumental</MenuItem>
+                  <MenuItem value="standard">Standard</MenuItem>
+                </Field>
+              </Grid>
 
-            <Grid item xs={12} md={6}>
-              <Field
-                component={TextField}
-                type="text"
-                fullWidth
-                label="Filter Type"
-                name="Filter"
-              />
-            </Grid>
+              <Grid item xs={12} md={6}>
+                <Field
+                  component={TextField}
+                  type="text"
+                  fullWidth
+                  label="Aperture"
+                  name="Aperture"
+                />
+              </Grid>
 
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Field component={Switch} type="checkbox" name="IsPublic" />
-                }
-                label="Is Public"
-              />
-            </Grid>
+              <Grid item xs={12} md={6}>
+                <Field
+                  component={TextField}
+                  type="text"
+                  fullWidth
+                  label="Filter Type"
+                  name="Filter"
+                />
+              </Grid>
 
-            <Grid item xs={9}>
-              <Button fullWidth variant='contained' type='submit'>Submit</Button>
-            </Grid>
-            <Grid item xs={3}>
-              <Button fullWidth variant='outlined' onClick={resetForm}>Reset Form</Button>
-            </Grid>
-          </Grid>
-        </Form>
+              <Grid item xs={12}>
+                <FormControlLabel
+                  control={
+                    <Field component={Switch} type="checkbox" name="IsPublic" />
+                  }
+                  label="Is Public"
+                />
+              </Grid>
 
-      )}
-    </Formik >
-  )
+              <Grid item xs={9}>
+                <Button fullWidth variant='contained' type='submit'>Submit</Button>
+              </Grid>
+              <Grid item xs={3}>
+                <Button fullWidth variant='outlined' onClick={resetForm}>Reset Form</Button>
+              </Grid>
+            </Grid>
+          </Form>
+
+        )}
+      </Formik >
+    )
+  }
+  return <Loader />
 }
 
 const Upload = () => {

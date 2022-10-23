@@ -3,6 +3,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText';
 import Link from 'next/link'
 import React from 'react'
+import { item, itemCategory } from './SidebarClasses';
 
 interface ISidebarCollapsibleItem {
   title: string;
@@ -13,7 +14,7 @@ interface ISidebarCollapsibleItem {
 const SidebarCollapsibleItem = ({ title, icon, href }: ISidebarCollapsibleItem) => {
   return (
     <Link href={href}>
-      <ListItemButton sx={{ pl: 4 }}>
+      <ListItemButton sx={{ ...item, ...itemCategory, pl: 5 }}>
         <ListItemIcon>
           {icon}
         </ListItemIcon>

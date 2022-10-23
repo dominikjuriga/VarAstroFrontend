@@ -17,6 +17,9 @@ import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak';
 import AddIcon from '@mui/icons-material/Add';
 import VillaIcon from '@mui/icons-material/Villa';
 import TimelineIcon from '@mui/icons-material/Timeline';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import GroupIcon from '@mui/icons-material/Group';
 interface IProps {
   sidebarToggled: boolean
 }
@@ -27,14 +30,14 @@ const Sidebar = ({ sidebarToggled }: IProps) => {
   return (
     <div className={`${s.sidebar} ${sidebarToggled ? s.sidebarToggled : ""}`}>
       <List
-        sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+        sx={{ width: '100%', maxWidth: 360, height: "100%", overflowY: "auto" }}
         component="nav"
         aria-labelledby="nested-list-subheader"
-        subheader={
-          <ListSubheader component="div" id="nested-list-subheader">
-            Navigation
-          </ListSubheader>
-        }
+      // subheader={
+      //   <ListSubheader component="div" id="nested-list-subheader">
+      //     Navigation
+      //   </ListSubheader>
+      // }
       >
         <SidebarItem title="Home" href='/' icon={<SendIcon />} />
         <SidebarCollapsibleList title="Stars" icon={<StarBorderIcon />}>
@@ -60,6 +63,11 @@ const Sidebar = ({ sidebarToggled }: IProps) => {
               <SidebarCollapsibleItem title='List' href='/Observatories' icon={<FormatListBulletedIcon />} />
               <SidebarCollapsibleItem title='Create New' href='/Observatories/CreateObservatory' icon={<AddIcon />} />
             </SidebarCollapsibleList>
+            <SidebarCollapsibleList title="Admin" icon={<AdminPanelSettingsIcon />}>
+              <SidebarCollapsibleItem title='Manage Users' href='/Admin/Users' icon={<GroupIcon />} />
+
+            </SidebarCollapsibleList>
+            <SidebarItem title={`${user.firstName} ${user.lastName}`} icon={<AssignmentIndIcon />} href={'/User/Profile'} />
             <SidebarItem clickHandler={logout} title={'Log Out'} icon={<LogoutIcon />} href={'#'} />
           </>
         )}

@@ -6,6 +6,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import React from 'react'
+import { item, itemCategory } from './SidebarClasses';
 
 interface ICollapsibleSidebarItem {
   title: string;
@@ -21,7 +22,7 @@ const SidebarCollapsibleList = ({ title, icon, children }: ICollapsibleSidebarIt
   };
   return (
     <>
-      <ListItemButton onClick={handleClick}>
+      <ListItemButton sx={{ ...item, ...itemCategory }} onClick={handleClick}>
         <ListItemIcon>
           {icon}
         </ListItemIcon>

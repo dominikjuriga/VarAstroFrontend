@@ -7,14 +7,17 @@ interface IDataTable {
 }
 
 const DataTable = ({ columns, rows }: IDataTable) => {
+  const [pageSize, setPageSize] = React.useState<number>(5);
+
   return (
     <DataGrid
       rows={rows}
       columns={columns}
-      pageSize={5}
       autoHeight
       checkboxSelection={false}
-      rowsPerPageOptions={[5]}
+      pageSize={pageSize}
+      onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+      rowsPerPageOptions={[5, 10, 15]}
       disableSelectionOnClick
     />
   )

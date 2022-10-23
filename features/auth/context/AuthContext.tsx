@@ -61,7 +61,7 @@ export default function AuthProvider({
       setJwt(authToken);
       console.log("attempting to set cookie")
       setCookie(AuthTokenCookieName, authToken, {
-        sameSite: "none"
+        // sameSite: "none" TODO Firefox?
       })
       toast(serviceResponse.message)
       router.push("/")

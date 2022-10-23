@@ -4,6 +4,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Link from 'next/link';
 import React from 'react'
+import { item, itemCategory } from './SidebarClasses';
 
 interface ISidebarItem {
   title: string;
@@ -13,9 +14,10 @@ interface ISidebarItem {
 }
 
 const SidebarItem = ({ title, icon, href, clickHandler }: ISidebarItem) => {
+
   return (
     <Link href={href}>
-      <ListItemButton>
+      <ListItemButton sx={{ ...item, ...itemCategory }}>
         <ListItemIcon>
           {icon}
         </ListItemIcon>
